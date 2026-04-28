@@ -1,0 +1,22 @@
+services:
+  wordjumblebot:
+    container_name: wordjumblebot
+    image: git.postfmly.com/admin/wordjumblebot:arm64
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    volumes:
+      - db:/app/db
+    environment:
+      - TZ=America/Chicago
+    env_file: .env
+    labels:
+      - wud.display.name=WordJumbleBot
+      - homepage.group=Personal
+      - homepage.name=WordJumbleBot
+      - homepage.icon=https://wordjumblebot.postfmly.com/wordjumblebot.webp
+
+volumes:
+  db:
+
+networks: {}

@@ -1,0 +1,68 @@
+{
+  "name": "wordjumblebot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WordJumbleBot for Discord",
+  "keywords": [
+    "jumble",
+    "word",
+    "bot",
+    "discord"
+  ],
+  "homepage": "https://github.com/chump29/wordjumblebot",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chump29/wordjumblebot.git"
+  },
+  "license": "GPL-3.0-only",
+  "author": {
+    "name": "Chris Post",
+    "email": "admin@postfmly.com"
+  },
+  "type": "module",
+  "module": "index.ts",
+  "scripts": {
+    "clean": "rimraf node_modules bun.lock",
+    "clean:db": "rimraf db/wordjumblebot.db",
+    "dev": "bun --watch run index.ts",
+    "preinstall": "bunx only-allow bun",
+    "postinstall": "config-init",
+    "lint": "bun run lint:biome && bun run lint:env",
+    "lint:biome": "biome check --write --verbose",
+    "lint:ci": "biome ci --verbose --reporter=default --reporter=github",
+    "lint:env": "dotenv-linter check .",
+    "prepare": "husky",
+    "prod": "NODE_ENV=production bun run index.ts"
+  },
+  "lint-staged": {
+    "*.{json,ts}": "biome ci --no-errors-on-unmatched",
+    ".env*": "dotenv-linter check"
+  },
+  "dependencies": {
+    "@wordlist/english-eff": "^1.0.1",
+    "@wordlist/random": "^5.0.0",
+    "date-and-time": "^4.4.0",
+    "discord.js": "^14.26.3",
+    "discord.js-rate-limiter": "^1.3.2",
+    "drizzle-orm": "1.0.0-beta.22",
+    "ms": "^2.1.3",
+    "pretty-ms": "^9.3.0",
+    "recolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.13",
+    "@postfmly/config": "^1.0.16",
+    "@types/bun": "^1.3.13",
+    "@types/ms": "^2.1.0",
+    "@types/node": "^25.6.0",
+    "globals": "^17.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "rimraf": "^6.1.3"
+  },
+  "packageManager": "bun@1.3.13",
+  "engines": {
+    "bun": "~1.3.13"
+  },
+  "engineStrict": true
+}
