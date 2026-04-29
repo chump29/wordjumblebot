@@ -7,10 +7,10 @@ import { info } from "./logger.ts"
 
 const RATE_LIMIT: number = ms((Bun.env.RATE || "1s") as StringValue)
 
-const rateLimiter = new RateLimiter(1, RATE_LIMIT)
+const rateLimiter: RateLimiter = new RateLimiter(1, RATE_LIMIT)
 
 const checkRate = async (interaction: ChatInputCommandInteraction, user: User | null = null): Promise<boolean> => {
-  const u = user ?? interaction.user
+  const u: User = user ?? interaction.user
 
   if (u.bot) {
     return true

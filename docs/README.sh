@@ -29,6 +29,10 @@ _drizzle=${_drizzle/-/--}
 export _drizzle
 echo -e " • _drizzle: ${_drizzle/--/-}"
 
+_sqlite=3.49.2
+export _sqlite
+echo -e " • _sqlite: $_sqlite"
+
 echo -e "\n🛠️  Creating README.md..."
 
 envsubst < README.template.md > ../README.md

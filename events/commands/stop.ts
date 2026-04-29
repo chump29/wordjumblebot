@@ -2,6 +2,7 @@ import { parse } from "node:path"
 
 import {
   type ChatInputCommandInteraction,
+  InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
@@ -15,7 +16,8 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
     .setDescription("Stop listening for word")
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
+    .setContexts(InteractionContextType.Guild)
     .toJSON()
 }
 

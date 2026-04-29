@@ -89,7 +89,7 @@ const jumbleWord = async (word: string): Promise<string> => {
     const arr: string[] = word.split("").splice(1)
     for (let i: number = arr.length - 1; i > 0; i--) {
       const j: number = Math.floor(Math.random() * (i + 1))
-      // @ts-expect-error
+      // @ts-expect-error: simplified Fisher-Yates algorithm
       ;[arr[i], arr[j]] = [
         arr[j],
         arr[i]
@@ -114,7 +114,7 @@ const newWord = async (): Promise<void> => {
     throw new Error("Error getting word")
   }
 
-  const word = await jumbleWord(WORD)
+  const word: string = await jumbleWord(WORD)
 
   if (MESSAGES.length) {
     await clearMessages()
