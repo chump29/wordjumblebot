@@ -9,7 +9,6 @@ import {
 } from "discord.js"
 
 import { newWord, RUNNING, WORD } from "../../utils/loadWord.ts"
-import { error } from "../../utils/logger.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()
@@ -21,29 +20,19 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
   if (!RUNNING) {
-    await interaction
-      .reply({
-        content: `-# > ❌ ${Bun.env.NAME} is not started`,
-        flags: MessageFlags.Ephemeral
-      })
-      .catch((e: unknown): void => {
-        error(e)
-        throw e
-      })
+    await interaction.reply({
+      content: `-# > ❌ ${Bun.env.NAME} is not started`,
+      flags: MessageFlags.Ephemeral
+    })
     return
   }
 
   await newWord()
 
-  await interaction
-    .reply({
-      content: `-# > 💬 New word: \`${WORD}\``,
-      flags: MessageFlags.Ephemeral
-    })
-    .catch((e: unknown): void => {
-      error(e)
-      throw e
-    })
+  await interaction.reply({
+    content: `-# > 💬 New word: \`${WORD}\``,
+    flags: MessageFlags.Ephemeral
+  })
 }
 
 export { create, invoke }

@@ -10,7 +10,6 @@ import {
 
 import { getWordPoints } from "../../utils/db.ts"
 import { WORD } from "../../utils/loadWord.ts"
-import { error } from "../../utils/logger.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()
@@ -21,20 +20,15 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
 }
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  let content: string = `-# > 💬 Listening for \`${WORD ? WORD : "N/A"}\``
+  let content: string = `-# > ❌ ${Bun.env.NAME} is not running`
   if (WORD) {
-    content += ` worth \`${await getWordPoints(WORD)}\` points`
+    content = `-# > 💬 Listening for \`${WORD}\` worth \`${await getWordPoints(WORD)}\` points`
   }
 
-  await interaction
-    .reply({
-      content: content,
-      flags: MessageFlags.Ephemeral
-    })
-    .catch((e: unknown): void => {
-      error(e)
-      throw e
-    })
+  await interaction.reply({
+    content: content,
+    flags: MessageFlags.Ephemeral
+  })
 }
 
 export { create, invoke }

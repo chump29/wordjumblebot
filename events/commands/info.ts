@@ -13,7 +13,6 @@ import {
 
 import { checkRate } from "../../utils/checkRate.ts"
 import { COUNT, MAX, MIN } from "../../utils/loadWord.ts"
-import { error } from "../../utils/logger.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()
@@ -29,44 +28,39 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
     return
   }
 
-  await interaction
-    .reply({
-      flags: MessageFlags.Ephemeral,
-      embeds: [
-        new EmbedBuilder()
-          .setColor("#78866b")
-          .setAuthor({
-            iconURL: Bun.env.LOGO_URL,
-            name: `${Bun.env.NAME} v${Bun.env.npm_package_version}`
-          })
-          .setThumbnail(Bun.env.LOGO_URL)
-          .setDescription("- Word jumble game")
-          .setFields(
-            {
-              inline: true,
-              name: "Total Words",
-              value: COUNT
-            } as APIEmbedField,
-            {
-              inline: true,
-              name: "Min Length",
-              value: MIN.toString()
-            } as APIEmbedField,
-            {
-              inline: true,
-              name: "Max Length",
-              value: MAX.toString()
-            } as APIEmbedField
-          )
-          .setFooter({
-            text: "By Chris Post"
-          })
-      ]
-    })
-    .catch((e: unknown): void => {
-      error(e)
-      throw e
-    })
+  await interaction.reply({
+    flags: MessageFlags.Ephemeral,
+    embeds: [
+      new EmbedBuilder()
+        .setColor("#78866b")
+        .setAuthor({
+          iconURL: Bun.env.LOGO_URL,
+          name: `${Bun.env.NAME} v${Bun.env.npm_package_version}`
+        })
+        .setThumbnail(Bun.env.LOGO_URL)
+        .setDescription("- Word jumble game")
+        .setFields(
+          {
+            inline: true,
+            name: "Total Words",
+            value: COUNT
+          } as APIEmbedField,
+          {
+            inline: true,
+            name: "Min Length",
+            value: MIN.toString()
+          } as APIEmbedField,
+          {
+            inline: true,
+            name: "Max Length",
+            value: MAX.toString()
+          } as APIEmbedField
+        )
+        .setFooter({
+          text: "By Chris Post"
+        })
+    ]
+  })
 }
 
 export { create, invoke }

@@ -10,7 +10,6 @@ import {
 } from "discord.js"
 
 import { checkRate } from "../../utils/checkRate.ts"
-import { error } from "../../utils/logger.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()
@@ -26,15 +25,10 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
     return
   }
 
-  await interaction
-    .reply({
-      content: `-# > **Pong!** ⚡ Your latency is: \`${Date.now() - interaction.createdTimestamp}ms\``,
-      flags: MessageFlags.Ephemeral
-    })
-    .catch((e: unknown): void => {
-      error(e)
-      throw e
-    })
+  await interaction.reply({
+    content: `-# > **Pong!** ⚡ Your latency is: \`${Date.now() - interaction.createdTimestamp}ms\``,
+    flags: MessageFlags.Ephemeral
+  })
 }
 
 export { create, invoke }
