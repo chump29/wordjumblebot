@@ -25,6 +25,9 @@ jobs:
           key: bun-${{ github.event.repository.name }}-${{ hashFiles('./bun.lock') }}
           path: ${{ env.BUN_INSTALL_CACHE_DIR }}
 
+      - name: Install rsync
+        run: sudo apt-get install -y rsync
+
       - name: Install dependencies
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
