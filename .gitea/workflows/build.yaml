@@ -22,13 +22,13 @@ jobs:
         env:
           BUN_INSTALL_CACHE_DIR: /tmp/.bun-cache
         with:
-          key: bun-${{ github.event.repository.name }}-${{ hashFiles('./frontend/bun.lock') }}
+          key: bun-${{ github.event.repository.name }}-${{ hashFiles('./bun.lock') }}
           path: ${{ env.BUN_INSTALL_CACHE_DIR }}
 
       - name: Install dependencies
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: bun install --frozen-lockfile --ignore-scripts --production
+        run: bun install --frozen-lockfile
 
       - name: Linting
         run: bun run lint:ci
