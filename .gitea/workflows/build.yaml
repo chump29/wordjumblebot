@@ -7,34 +7,34 @@ on:
       - main
   workflow_dispatch:
 
-    #env:
-    #  ENV BUN_INSTALL_CACHE_DIR: /tmp/.bun-cache
-
 jobs:
-  # ! TODO: @postfmly registry
-  # check:
-  #   runs-on: amd64
-  #   steps:
-  #     - name: Check out repository
-  #       uses: actions/checkout@v6
+  check:
+    runs-on: amd64
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
 
-  #     - name: Install Bun
-  #       uses: oven-sh/setup-bun@v2
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
 
-  #     - name: Get Bun cache
-  #       uses: actions/cache@v5
-  #       with:
-  #         key: bun-${{ github.event.repository.name }}-${{ hashFiles('./frontend/bun.lock') }}
-  #         path: ${{ env.BUN_INSTALL_CACHE_DIR }}
+      - name: Get Bun cache
+        uses: actions/cache@v5
+        env:
+          BUN_INSTALL_CACHE_DIR: /tmp/.bun-cache
+        with:
+          key: bun-${{ github.event.repository.name }}-${{ hashFiles('./frontend/bun.lock') }}
+          path: ${{ env.BUN_INSTALL_CACHE_DIR }}
 
-  #     - name: Install dependencies
-  #       run: bun install --frozen-lockfile --ignore-scripts --production
+      - name: Install dependencies
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: bun install --frozen-lockfile --ignore-scripts --production
 
-  #     - name: Linting
-  #       run: bun run lint:ci
+      - name: Linting
+        run: bun run lint:ci
 
   amd64:
-    #    needs: [check]
+    needs: [ check ]
     runs-on: amd64
     steps:
       - name: Check out repository
@@ -48,11 +48,10 @@ jobs:
           password: ${{ secrets.PASSWORD }}
 
       - name: Build and push
-        run: docker buildx build --platform linux/amd64 --tag
-          git.postfmly.com/admin/wordjumblebot:amd64 --push .
+        run: docker buildx build --platform linux/amd64 --tag git.postfmly.com/admin/wordjumblebot:amd64 --push .
 
   arm64:
-    #   needs: [check]
+    needs: [ check ]
     runs-on: arm64
     steps:
       - name: Check out repository
@@ -66,8 +65,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
 
       - name: Build and push
-        run: docker buildx build --platform linux/arm64 --tag
-          git.postfmly.com/admin/wordjumblebot:arm64 --push .
+        run: docker buildx build --platform linux/arm64 --tag git.postfmly.com/admin/wordjumblebot:arm64 --push .
 
   manifest:
     needs: [ amd64, arm64 ]
