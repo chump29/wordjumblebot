@@ -8,6 +8,7 @@ import {
   SlashCommandBuilder
 } from "discord.js"
 
+import { getWordPoints } from "../../utils/db.ts"
 import { WORD } from "../../utils/loadWord.ts"
 import { error } from "../../utils/logger.ts"
 
@@ -20,9 +21,14 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
 }
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
+  let content: string = `-# > 💬 Listening for \`${WORD ? WORD : "N/A"}\``
+  if (WORD) {
+    content += ` worth \`${await getWordPoints(WORD)}\` points`
+  }
+
   await interaction
     .reply({
-      content: `-# > 💬 Listening for \`${WORD ? WORD : "N/A"}\``,
+      content: content,
       flags: MessageFlags.Ephemeral
     })
     .catch((e: unknown): void => {

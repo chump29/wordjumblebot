@@ -185,29 +185,23 @@ const checkWord = async (message: Message): Promise<void> => {
   }
 
   const name: string = message.member.user.displayName
+
+  const points: number = await updatePoints(name, WORD as string)
+
+  if (Bun.env.DEBUG) {
+    info(`${name} guessed the word ${WORD} for ${points} points`)
+  }
+
   await CHANNEL.send({
-    content: `-# > \`${name}\` guessed the word \`${WORD}\``,
+    content: `-# > \`${name}\` guessed the word \`${WORD}\` for \`${points}\` points`,
     flags: MessageFlags.SuppressNotifications
   })
-    .then(async (message: Message): Promise<Message> => {
+    .then((message: Message): void => {
       MESSAGES.push(message.id)
-
-      const points: number = await updatePoints(name, WORD as string)
 
       WORD = null
-
-      if (Bun.env.DEBUG) {
-        info(`${name} guessed the word for ${points} points`)
-      }
-
-      return await CHANNEL!.send({
-        content: `-# > Awarded \`${points}\` points`,
-        flags: MessageFlags.SuppressNotifications
-      })
     })
-    .then(async (message: Message): Promise<Message> => {
-      MESSAGES.push(message.id)
-
+    .then(async (): Promise<Message> => {
       if (!TIMEOUT) {
         throw new Error("Invalid timeout")
       }

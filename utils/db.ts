@@ -57,7 +57,7 @@ const openDatabase = async (): Promise<void> => {
   }
 }
 
-const getPoints = async (name: string): Promise<number> => {
+const getUserPoints = async (name: string): Promise<number> => {
   if (!DB) {
     throw new Error("Database not open")
   }
@@ -68,6 +68,12 @@ const getPoints = async (name: string): Promise<number> => {
   }
 
   return user[0].points
+}
+
+const getWordPoints = async (word: string): Promise<number> => {
+  return Math.floor(
+    word.split("").reduce((sum: number, char: string): number => sum + char.charCodeAt(0), 0) * POINTS_MODIFIER
+  )
 }
 
 const updatePoints = async (name: string, word: string): Promise<number> => {
@@ -83,23 +89,22 @@ const updatePoints = async (name: string, word: string): Promise<number> => {
     throw new Error("Database not open")
   }
 
-  const points: number = Math.floor(
-    word.split("").reduce((sum: number, char: string): number => sum + char.charCodeAt(0), 0) * POINTS_MODIFIER
-  )
+  return await getWordPoints(word).then(async (points: number): Promise<number> => {
+    await DB!
+      .insert(users)
+      .values({
+        name: name,
+        points: points
+      })
+      .onConflictDoUpdate({
+        target: users.name,
+        set: {
+          points: (await getUserPoints(name)) + points
+        }
+      })
 
-  await DB.insert(users)
-    .values({
-      name: name,
-      points: points
-    })
-    .onConflictDoUpdate({
-      target: users.name,
-      set: {
-        points: (await getPoints(name)) + points
-      }
-    })
-
-  return points
+    return points
+  })
 }
 
 const getAll = async (): Promise<IUser[]> => {
@@ -129,4 +134,4 @@ const closeDatabase = async (): Promise<void> => {
   SQLITE?.close()
 }
 
-export { closeDatabase, getAll, openDatabase, resetPoints, updatePoints }
+export { closeDatabase, getAll, getWordPoints, openDatabase, resetPoints, updatePoints }
