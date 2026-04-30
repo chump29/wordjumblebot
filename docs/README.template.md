@@ -17,7 +17,7 @@
 
 ### 🔗 Invite Link <!-- markdownlint-disable-line MD001 -->
 
-[Add WordJumbleBot](https://discord.com/oauth2/authorize?client_id=1496825383348211783&permissions=84992&integration_type=0&scope=bot)
+[Add WordJumbleBot](https://discord.com/oauth2/authorize?client_id=1496825383348211783&permissions=93184&integration_type=0&scope=bot)
 
 ---
 
@@ -30,6 +30,7 @@
 |    ViewChannel     |
 |    SendMessages    |
 |     EmbedLinks     |
+|   ManageMessages   |
 | ReadMessageHistory |
 
 #### Commands:
@@ -108,23 +109,23 @@
 
 #### Environment Variables:
 
-|     📝 Description      | 📌 Variable |   {...} Value    |
-|:-----------------------:|:-----------:|:----------------:|
-|     Autostart Game      |  AUTOSTART  |  true/**false**  |
-|   Message Channel ID    | CHANNEL_ID  |   [channel id]   |
-|         DB Name         |   DB_NAME   | wordjumblebot.db |
-|         DB Path         |   DB_PATH   |      ./db/       |
-|          Debug          |  IS_DEBUG   |  true/**false**  |
-|    Logo Server Port     |  LOGO_PORT  |       8004       |
-|     Run Logo Server     | LOGO_SERVER |  **true**/false  |
-|        Logo URL         |  LOGO_URL   |    [logo url]    |
-|   Maximum Word Length   | MAX_LENGTH  |   0 (disable)    |
-|   Minimum Word Length   | MIN_LENGTH  | 4 (must be >=3)  |
-|        Bot Name         |    NAME     |  WordJumbleBot   |
-|      Award Points       |   POINTS    |        1         |
-|   Message Rate Limit    |    RATE     |        1s        |
-| Wait Time Between Words |   TIMEOUT   |       180s       |
-|        Bot Token        |    TOKEN    |     [token]      |
+|       📝 Description       |   📌 Variable   |   {...} Value    |
+|:--------------------------:|:---------------:|:----------------:|
+|       Autostart Game       |    AUTOSTART    |  true/**false**  |
+|     Message Channel ID     |   CHANNEL_ID    |   [channel id]   |
+|          DB Name           |     DB_NAME     | wordjumblebot.db |
+|          DB Path           |     DB_PATH     |      ./db/       |
+|           Debug            |    IS_DEBUG     |  true/**false**  |
+|      Logo Server Port      |    LOGO_PORT    |       8004       |
+|      Run Logo Server       |   LOGO_SERVER   |  **true**/false  |
+|          Logo URL          |    LOGO_URL     |    [logo url]    |
+|    Maximum Word Length     |   MAX_LENGTH    |   0 (disable)    |
+|    Minimum Word Length     |   MIN_LENGTH    | 5 (must be >=3)  |
+|          Bot Name          |      NAME       |  WordJumbleBot   |
+| Word Value Points Modifier | POINTS_MODIFIER |       0.25       |
+|     Message Rate Limit     |      RATE       |        1s        |
+|  Wait Time Between Words   |     TIMEOUT     |        2m        |
+|         Bot Token          |      TOKEN      |     [token]      |
 
 #### Deployment:
 

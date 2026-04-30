@@ -1,32 +1,44 @@
-import { type Channel, type Client, type Message, MessageFlags, type TextChannel } from "discord.js"
+import {
+  type Channel,
+  type Client,
+  type Collection,
+  type Message,
+  MessageFlags,
+  type PartialMessage,
+  type Snowflake,
+  type TextChannel
+} from "discord.js"
 
 import { all as words } from "@wordlist/english-eff/all"
 import { RandomWords } from "@wordlist/random"
 import ms, { type StringValue } from "ms"
+import pluralize from "pluralize"
 import prettyMilliseconds from "pretty-ms"
 
 import { updatePoints } from "./db.ts"
-import { info } from "./logger.ts"
+import { error, info } from "./logger.ts"
 
 let CLIENT: Client | null = null
 let CHANNEL: TextChannel | null = null
-
-let WORD: string | null = null
+let allWords: string[] = []
 
 let COUNT: string = ""
 
-const MAX_LENGTH: number = 0
+let WORD: string | null = null
+
 const MIN_LENGTH: number = 3
-let MAX: number = MAX_LENGTH
+const MAX_LENGTH: number = 0
 let MIN: number = MIN_LENGTH
+let MAX: number = MAX_LENGTH
 
 let RUNNING: boolean = false
 
 let TIMEOUT: number = 0
+let ID: NodeJS.Timeout | null = null
 
-let MESSAGES: Message[] = []
+let MESSAGES: Snowflake[] = []
 
-const randomWord: RandomWords = new RandomWords(words)
+let randomWord: RandomWords | null = null
 
 const loadSettings = async (client: Client): Promise<void> => {
   if (!client) {
@@ -39,34 +51,43 @@ const loadSettings = async (client: Client): Promise<void> => {
     throw new Error("Invalid MIN_LENGTH")
   }
 
-  MAX = isNaN(Number(Bun.env.MAX_LENGTH)) ? MAX_LENGTH : Number(Bun.env.MAX_LENGTH)
   MIN = isNaN(Number(Bun.env.MIN_LENGTH)) ? MIN_LENGTH : Number(Bun.env.MIN_LENGTH)
+  MAX = isNaN(Number(Bun.env.MAX_LENGTH)) ? MAX_LENGTH : Number(Bun.env.MAX_LENGTH)
+  MAX = MAX === 0 ? Math.max(...words.map((word: string): number => word.length)) : MAX
 
   if (MAX < MIN) {
     MAX = MAX_LENGTH
   }
 
-  TIMEOUT = ms((Bun.env.TIMEOUT || "180s") as StringValue)
+  allWords = words.filter((word: string): boolean => {
+    let success: boolean = false
+    if (word.length >= MIN && word.length <= MAX) {
+      success = true
+    }
+    return success
+  })
+  if (!allWords.length) {
+    throw new Error("No words")
+  }
 
-  COUNT = words.length.toLocaleString()
+  randomWord = new RandomWords(allWords)
+
+  COUNT = allWords.length.toLocaleString()
+
+  TIMEOUT = ms((Bun.env.TIMEOUT || "2m") as StringValue)
 
   if (Bun.env.DEBUG) {
-    info(`Loaded ${COUNT} words`)
+    info(`Loaded ${COUNT} words`, `Minimum length: ${MIN}`, `Maximum length: ${MAX}`)
   }
 }
 
-const getWord = async (): Promise<string> => {
-  return await randomWord
-    .generate()
-    .then((words: string[]): string => words[0] as string)
-    .then(async (word: string): Promise<string> => {
-      if (word.length < MIN) {
-        return await getWord()
-      } else if (MAX !== 0 && word.length > MAX) {
-        return await getWord()
-      }
-      return word
-    })
+const getWord = async (): Promise<string | null> => {
+  if (!randomWord) {
+    throw new Error("Invalid randomWord")
+  }
+
+  const word: string[] = await randomWord.generate()
+  return word.length ? (word[0] as string) : null
 }
 
 const getChannel = async (): Promise<TextChannel> => {
@@ -101,13 +122,26 @@ const jumbleWord = async (word: string): Promise<string> => {
 }
 
 const clearMessages = async (): Promise<void> => {
-  MESSAGES.forEach(async (message: Message): Promise<void> => {
-    await message.delete()
-  })
-  MESSAGES = []
+  if (!CHANNEL) {
+    throw new Error("Invalid channel")
+  }
+
+  await CHANNEL.bulkDelete(MESSAGES)
+    .then((messages: Collection<Snowflake, Message | PartialMessage | undefined>): void => {
+      MESSAGES = []
+
+      if (Bun.env.DEBUG && messages) {
+        info(`Cleared ${pluralize("message", messages.size, true)}`)
+      }
+    })
+    .catch((e: Error): void => error(e.message))
 }
 
 const newWord = async (): Promise<void> => {
+  if (ID) {
+    clearTimeout(ID)
+  }
+
   WORD = await getWord()
 
   if (!WORD) {
@@ -115,6 +149,13 @@ const newWord = async (): Promise<void> => {
   }
 
   const word: string = await jumbleWord(WORD)
+  if (!word.length) {
+    throw new Error("Invalid word")
+  }
+
+  if (Bun.env.DEBUG) {
+    info(`Jumbled ${WORD} as ${word}`)
+  }
 
   if (MESSAGES.length) {
     await clearMessages()
@@ -128,20 +169,14 @@ const newWord = async (): Promise<void> => {
     content: `-# > Guess the word: \`${word}\``,
     flags: MessageFlags.SuppressNotifications
   }).then((message: Message): void => {
-    MESSAGES.push(message)
+    MESSAGES.push(message.id)
   })
-
-  if (Bun.env.DEBUG) {
-    info(`New word: ${WORD}`)
-  }
 }
 
 const checkWord = async (message: Message): Promise<void> => {
   if (!WORD || !message.content.trim().toLowerCase().includes(WORD) || !message.member || message.member.user.bot) {
     return
   }
-
-  WORD = null
 
   await clearMessages()
 
@@ -151,19 +186,28 @@ const checkWord = async (message: Message): Promise<void> => {
 
   const name: string = message.member.user.displayName
   await CHANNEL.send({
-    content: `-# > \`${name}\` guessed the word \`${WORD}\`!`,
+    content: `-# > \`${name}\` guessed the word \`${WORD}\``,
     flags: MessageFlags.SuppressNotifications
   })
-    .then(async (message: Message): Promise<void> => {
-      await updatePoints(name)
+    .then(async (message: Message): Promise<Message> => {
+      MESSAGES.push(message.id)
 
-      MESSAGES.push(message)
+      const points: number = await updatePoints(name, WORD as string)
+
+      WORD = null
 
       if (Bun.env.DEBUG) {
-        info(`${name} guessed the word!`)
+        info(`${name} guessed the word for ${points} points`)
       }
+
+      return await CHANNEL!.send({
+        content: `-# > Awarded \`${points}\` points`,
+        flags: MessageFlags.SuppressNotifications
+      })
     })
-    .then(async (): Promise<void> => {
+    .then(async (message: Message): Promise<Message> => {
+      MESSAGES.push(message.id)
+
       if (!TIMEOUT) {
         throw new Error("Invalid timeout")
       }
@@ -172,19 +216,19 @@ const checkWord = async (message: Message): Promise<void> => {
         verbose: true
       })
 
-      MESSAGES.push(
-        await CHANNEL!.send({
-          content: `-# > Next word in \`${timeout}\``,
-          flags: MessageFlags.SuppressNotifications
-        })
-      )
-
       if (Bun.env.DEBUG) {
         info(`Next word in ${timeout}`)
       }
+
+      return await CHANNEL!.send({
+        content: `-# > Next word in \`${timeout}\``,
+        flags: MessageFlags.SuppressNotifications
+      })
     })
-    .then((): void => {
-      setTimeout(newWord, TIMEOUT)
+    .then((message: Message): void => {
+      MESSAGES.push(message.id)
+
+      ID = setTimeout(newWord, TIMEOUT)
     })
 }
 
@@ -198,6 +242,10 @@ const startWord = async (): Promise<void> => {
 }
 
 const stopWord = async (): Promise<void> => {
+  if (ID) {
+    clearTimeout(ID)
+  }
+
   RUNNING = false
   WORD = null
 
@@ -208,4 +256,4 @@ const stopWord = async (): Promise<void> => {
   }
 }
 
-export { COUNT, checkWord, loadSettings, newWord, RUNNING, startWord, stopWord, WORD }
+export { COUNT, checkWord, loadSettings, MAX, MIN, newWord, RUNNING, startWord, stopWord, WORD }

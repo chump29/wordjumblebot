@@ -11,6 +11,11 @@ import { info } from "./logger.ts"
 let SQLITE: Database | null = null
 let DB: SQLiteBunDatabase | null = null
 
+const DEFAULT_MODIFIER: number = 0.25
+const POINTS_MODIFIER: number = isNaN(Number(Bun.env.POINTS_MODIFIER))
+  ? DEFAULT_MODIFIER
+  : Number(Bun.env.POINTS_MODIFIER)
+
 const openDatabase = async (): Promise<void> => {
   await mkdir(Bun.env.DB_PATH, {
     recursive: true
@@ -65,22 +70,36 @@ const getPoints = async (name: string): Promise<number> => {
   return user[0].points
 }
 
-const updatePoints = async (name: string): Promise<void> => {
+const updatePoints = async (name: string, word: string): Promise<number> => {
+  if (!name.length) {
+    throw new Error("Invalid name")
+  }
+
+  if (!word.length) {
+    throw new Error("Invalid word")
+  }
+
   if (!DB) {
     throw new Error("Database not open")
   }
 
+  const points: number = Math.floor(
+    word.split("").reduce((sum: number, char: string): number => sum + char.charCodeAt(0), 0) * POINTS_MODIFIER
+  )
+
   await DB.insert(users)
     .values({
       name: name,
-      points: 1
+      points: points
     })
     .onConflictDoUpdate({
       target: users.name,
       set: {
-        points: (await getPoints(name)) + (isNaN(Number(Bun.env.POINTS)) ? 1 : Number(Bun.env.POINTS))
+        points: (await getPoints(name)) + points
       }
     })
+
+  return points
 }
 
 const getAll = async (): Promise<IUser[]> => {

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "types": [
       "bun",
-      "ms"
+      "ms",
+      "pluralize"
     ]
   }
 }

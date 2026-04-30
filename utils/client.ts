@@ -7,8 +7,13 @@ import { SERVER } from "./logo.ts"
 
 let CLIENT: Client | null = null
 
+let isShutdown: boolean = false
+
 const shutdown = async (): Promise<void> => {
   info("Shutting down...")
+
+  isShutdown = true
+
   await closeDatabase()
     .then(async (): Promise<void> => {
       if (RUNNING) {
@@ -42,10 +47,26 @@ const client = async (): Promise<Client> => {
   })
 
   process.on("SIGINT", async (): Promise<void> => {
+    if (isShutdown) {
+      return
+    }
+
+    if (Bun.env.DEBUG) {
+      info("SIGINT detected")
+    }
+
     await shutdown()
   })
 
   process.on("SIGTERM", async (): Promise<void> => {
+    if (isShutdown) {
+      return
+    }
+
+    if (Bun.env.DEBUG) {
+      info("SIGTERM detected")
+    }
+
     await shutdown()
   })
 

@@ -60,7 +60,7 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
 
   await interaction
     .reply({
-      flags: users.length ? MessageFlags.SuppressNotifications : MessageFlags.Ephemeral,
+      flags: MessageFlags.Ephemeral,
       embeds: [
         new EmbedBuilder()
           .setColor("#78866b")
