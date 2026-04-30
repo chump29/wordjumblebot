@@ -27,7 +27,8 @@ const openDatabase = async (): Promise<void> => {
     strict: true
   })
   DB = drizzle({
-    client: SQLITE
+    client: SQLITE,
+    jit: true
   })
   DB.run("PRAGMA journal_mode = WAL;")
   DB.run("PRAGMA wal_checkpoint(TRUNCATE);")
