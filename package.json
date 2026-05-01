@@ -24,7 +24,6 @@
   "scripts": {
     "clean": "rimraf node_modules bun.lock",
     "clean:db": "rimraf db/wordjumblebot.db*",
-    "db:seed": "bun run db/seed.ts",
     "dev": "bun --watch run index.ts",
     "preinstall": "bunx only-allow bun",
     "postinstall": "config-init",
@@ -53,7 +52,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.13",
-    "@postfmly/config": "^1.0.16",
+    "@postfmly/config": "^1.0.17",
     "@types/bun": "^1.3.13",
     "@types/ms": "^2.1.0",
     "@types/node": "^25.6.0",

@@ -32,6 +32,6 @@ ENV TZ=Etc/GMT
 
 HEALTHCHECK --interval=60s CMD source healthcheck.sh
 
-EXPOSE 8002
+EXPOSE 8004
 
 ENTRYPOINT ["bun", "run", "prod"]
