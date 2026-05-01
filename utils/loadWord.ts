@@ -40,6 +40,20 @@ let MESSAGES: Snowflake[] = []
 
 let randomWord: RandomWords | null = null
 
+const getChannel = async (): Promise<TextChannel> => {
+  if (!CLIENT) {
+    throw new Error("Invalid client")
+  }
+
+  return await CLIENT.channels.fetch(Bun.env.CHANNEL_ID).then((channel: Channel | null) => {
+    if (!channel) {
+      throw new Error("Invalid channel")
+    }
+
+    return channel as TextChannel
+  })
+}
+
 const loadSettings = async (client: Client): Promise<void> => {
   if (!client) {
     throw new Error("Invalid client")
@@ -89,20 +103,6 @@ const getWord = async (): Promise<string | null> => {
 
   const word: string[] = await randomWord.generate()
   return word.length ? (word[0] as string) : null
-}
-
-const getChannel = async (): Promise<TextChannel> => {
-  if (!CLIENT) {
-    throw new Error("Invalid client")
-  }
-
-  return await CLIENT.channels.fetch(Bun.env.CHANNEL_ID).then((channel: Channel | null) => {
-    if (!channel) {
-      throw new Error("Invalid channel")
-    }
-
-    return channel as TextChannel
-  })
 }
 
 const jumbleWord = async (word: string): Promise<string> => {
