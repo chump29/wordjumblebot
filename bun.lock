@@ -23,7 +23,7 @@
         "@types/ms": "^2.1.0",
         "@types/node": "^25.6.0",
         "@types/pluralize": "^0.0.33",
-        "globals": "^17.5.0",
+        "globals": "^17.6.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.4.0",
         "rimraf": "^6.1.3",
@@ -127,7 +127,7 @@
 
     "glob": ["glob@13.0.6", "https://npm.postfmly.com/glob/-/glob-13.0.6.tgz", { "dependencies": { "minimatch": "^10.2.2", "minipass": "^7.1.3", "path-scurry": "^2.0.2" } }, "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw=="],
 
-    "globals": ["globals@17.5.0", "https://npm.postfmly.com/globals/-/globals-17.5.0.tgz", {}, "sha512-qoV+HK2yFl/366t2/Cb3+xxPUo5BuMynomoDmiaZBIdbs+0pYbjfZU+twLhGKp4uCZ/+NbtpVepH5bGCxRyy2g=="],
+    "globals": ["globals@17.6.0", "https://npm.postfmly.com/globals/-/globals-17.6.0.tgz", {}, "sha512-sepffkT8stwnIYbsMBpoCHJuJM5l98FUF2AnE07hfvE0m/qp3R586hw4jF4uadbhvg1ooIdzuu7CsfD2jzCaNA=="],
 
     "husky": ["husky@9.1.7", "https://npm.postfmly.com/husky/-/husky-9.1.7.tgz", { "bin": "bin.js" }, "sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA=="],
 

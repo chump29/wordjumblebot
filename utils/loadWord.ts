@@ -46,6 +46,7 @@ const loadSettings = async (client: Client): Promise<void> => {
   }
 
   CLIENT = client
+  CHANNEL = await getChannel()
 
   if (Bun.env.MIN_LENGTH.length && !isNaN(Number(Bun.env.MIN_LENGTH)) && Number(Bun.env.MIN_LENGTH) < MIN_LENGTH) {
     throw new Error("Invalid MIN_LENGTH")
@@ -162,7 +163,7 @@ const newWord = async (): Promise<void> => {
   }
 
   if (!CHANNEL) {
-    CHANNEL = await getChannel()
+    throw new Error("Invalid channel")
   }
 
   await CHANNEL.send({
@@ -180,16 +181,16 @@ const checkWord = async (message: Message): Promise<void> => {
 
   await clearMessages()
 
-  if (!CHANNEL) {
-    throw new Error("Invalid channel")
-  }
-
   const name: string = message.member.user.displayName
 
   const points: number = await updatePoints(name, WORD as string)
 
   if (Bun.env.DEBUG) {
     info(`${name} guessed the word ${WORD} for ${points} points`)
+  }
+
+  if (!CHANNEL) {
+    throw new Error("Invalid channel")
   }
 
   await CHANNEL.send({
