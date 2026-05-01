@@ -1,4 +1,4 @@
 .env.local
 .vscode/
-db/wordjumblebot.db
+db/wordjumblebot.db*
 node_modules/

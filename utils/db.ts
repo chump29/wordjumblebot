@@ -4,6 +4,7 @@ import { Database, SQLiteError } from "bun:sqlite"
 
 import { desc, eq } from "drizzle-orm"
 import { drizzle, type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
+import { reset, seed } from "drizzle-seed"
 
 import { type IUser, users } from "../db/schema.ts"
 import { info } from "./logger.ts"
@@ -135,4 +136,37 @@ const closeDatabase = async (): Promise<void> => {
   SQLITE?.close()
 }
 
-export { closeDatabase, getAll, getWordPoints, openDatabase, resetPoints, updatePoints }
+const resetDB = async (): Promise<void> => {
+  if (!DB) {
+    throw new Error("Database not open")
+  }
+
+  await reset(DB, {
+    users
+  })
+}
+
+const seedDB = async (): Promise<void> => {
+  if (!DB) {
+    throw new Error("Database not open")
+  }
+
+  await seed(DB, {
+    users
+  }).refine((f) => ({
+    users: {
+      columns: {
+        name: f.fullName({
+          isUnique: true
+        }),
+        points: f.int({
+          isUnique: true,
+          maxValue: 9,
+          minValue: 0
+        })
+      }
+    }
+  }))
+}
+
+export { closeDatabase, getAll, getWordPoints, openDatabase, resetDB, resetPoints, seedDB, updatePoints }
