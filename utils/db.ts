@@ -4,18 +4,12 @@ import { Database, SQLiteError } from "bun:sqlite"
 
 import { desc, eq } from "drizzle-orm"
 import { drizzle, type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
-import { reset, seed } from "drizzle-seed"
 
 import { type IUser, users } from "../db/schema.ts"
 import { info } from "./logger.ts"
 
 let SQLITE: Database | null = null
 let DB: SQLiteBunDatabase | null = null
-
-const DEFAULT_MODIFIER: number = 0.25
-const POINTS_MODIFIER: number = isNaN(Number(Bun.env.POINTS_MODIFIER))
-  ? DEFAULT_MODIFIER
-  : Number(Bun.env.POINTS_MODIFIER)
 
 const openDatabase = async (): Promise<void> => {
   await mkdir(Bun.env.DB_PATH, {
@@ -74,7 +68,10 @@ const getUserPoints = async (name: string): Promise<number> => {
 
 const getWordPoints = async (word: string): Promise<number> => {
   return Math.floor(
-    word.split("").reduce((sum: number, char: string): number => sum + char.charCodeAt(0), 0) * POINTS_MODIFIER
+    word
+      .toUpperCase()
+      .split("")
+      .reduce((sum: number, char: string): number => sum + char.charCodeAt(0), 0) / 2
   )
 }
 
@@ -136,37 +133,4 @@ const closeDatabase = async (): Promise<void> => {
   SQLITE?.close()
 }
 
-const resetDB = async (): Promise<void> => {
-  if (!DB) {
-    throw new Error("Database not open")
-  }
-
-  await reset(DB, {
-    users
-  })
-}
-
-const seedDB = async (): Promise<void> => {
-  if (!DB) {
-    throw new Error("Database not open")
-  }
-
-  await seed(DB, {
-    users
-  }).refine((f) => ({
-    users: {
-      columns: {
-        name: f.fullName({
-          isUnique: true
-        }),
-        points: f.int({
-          isUnique: true,
-          maxValue: 9,
-          minValue: 0
-        })
-      }
-    }
-  }))
-}
-
-export { closeDatabase, getAll, getWordPoints, openDatabase, resetDB, resetPoints, seedDB, updatePoints }
+export { closeDatabase, getAll, getWordPoints, openDatabase, resetPoints, updatePoints }

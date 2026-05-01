@@ -122,7 +122,6 @@
 |    Maximum Word Length     |   MAX_LENGTH    |   0 (disable)    |
 |    Minimum Word Length     |   MIN_LENGTH    | 5 (must be >=3)  |
 |          Bot Name          |      NAME       |  WordJumbleBot   |
-| Word Value Points Modifier | POINTS_MODIFIER |       0.25       |
 |     Message Rate Limit     |      RATE       |        1s        |
 |  Wait Time Between Words   |     TIMEOUT     |        2m        |
 |         Bot Token          |      TOKEN      |     [token]      |

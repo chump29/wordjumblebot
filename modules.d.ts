@@ -13,7 +13,6 @@ declare module "bun" {
     MIN_LENGTH: string
     NAME: string
     npm_package_version: string
-    POINTS_MODIFIER: string
     RATE: string
     TIMEOUT: string
     TOKEN: string
