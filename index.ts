@@ -1,10 +1,11 @@
 import { type Client } from "discord.js"
 
+import { error, info } from "@postfmly/logger"
+
 import { loadCommands } from "./events/loadCommands.ts"
 import { client, login, shutdown } from "./utils/client.ts"
 import { openDatabase } from "./utils/db.ts"
 import { loadSettings, startWord } from "./utils/loadWord.ts"
-import { error, info } from "./utils/logger.ts"
 import { logo } from "./utils/logo.ts"
 
 Bun.env.DEBUG = Bun.env.IS_DEBUG === "true" ? true : false

@@ -43,7 +43,7 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
           {
             inline: true,
             name: "Total Words",
-            value: COUNT
+            value: COUNT.toLocaleString()
           } as APIEmbedField,
           {
             inline: true,

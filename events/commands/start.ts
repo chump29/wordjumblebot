@@ -2,6 +2,7 @@ import { parse } from "node:path"
 
 import {
   type ChatInputCommandInteraction,
+  type InteractionResponse,
   MessageFlags,
   PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
@@ -27,12 +28,13 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
     return
   }
 
-  await startWord()
-
-  await interaction.reply({
-    content: `-# > ▶️ ${Bun.env.NAME} is listening for \`${WORD}\``,
-    flags: MessageFlags.Ephemeral
-  })
+  await startWord().then(
+    async (): Promise<InteractionResponse> =>
+      await interaction.reply({
+        content: `-# > ▶️ ${Bun.env.NAME} is listening for \`${WORD}\``,
+        flags: MessageFlags.Ephemeral
+      })
+  )
 }
 
 export { create, invoke }

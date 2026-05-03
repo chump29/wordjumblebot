@@ -9,20 +9,21 @@ import {
   type TextChannel
 } from "discord.js"
 
+import { error, info } from "@postfmly/logger"
+
 import { all as words } from "@wordlist/english-eff/all"
 import { RandomWords } from "@wordlist/random"
 import ms, { type StringValue } from "ms"
 import pluralize from "pluralize"
 import prettyMilliseconds from "pretty-ms"
 
-import { updatePoints } from "./db.ts"
-import { error, info } from "./logger.ts"
+import { type IPoints, QUEST_MAX, QUEST_POINTS, updatePoints } from "./db.ts"
 
 let CLIENT: Client | null = null
 let CHANNEL: TextChannel | null = null
-let allWords: string[] = []
 
-let COUNT: string = ""
+let allWords: string[] = []
+let COUNT: number = 0
 
 let WORD: string | null = null
 
@@ -87,12 +88,12 @@ const loadSettings = async (client: Client): Promise<void> => {
 
   randomWord = new RandomWords(allWords)
 
-  COUNT = allWords.length.toLocaleString()
+  COUNT = allWords.length
 
   TIMEOUT = ms((Bun.env.TIMEOUT || "2m") as StringValue)
 
   if (Bun.env.DEBUG) {
-    info(`Loaded ${COUNT} words`, `Minimum length: ${MIN}`, `Maximum length: ${MAX}`)
+    info(`Loaded ${pluralize("word", COUNT, true)}`, `Minimum length: ${MIN}`, `Maximum length: ${MAX}`)
   }
 }
 
@@ -132,7 +133,7 @@ const clearMessages = async (): Promise<void> => {
       MESSAGES = []
 
       if (Bun.env.DEBUG && messages) {
-        info(`Cleared ${pluralize("message", messages.size, true)}`)
+        info(`Cleared ${pluralize("message", messages.size)}`)
       }
     })
     .catch((e: Error): void => error(e.message))
@@ -183,10 +184,13 @@ const checkWord = async (message: Message): Promise<void> => {
 
   const name: string = message.member.user.displayName
 
-  const points: number = await updatePoints(name, WORD as string)
+  const points: IPoints = await updatePoints(name, WORD as string)
 
   if (Bun.env.DEBUG) {
-    info(`${name} guessed the word ${WORD} for ${points} points`)
+    info(
+      `${name} guessed the word ${WORD} for ${points.points} points`,
+      `Quest: ${points.questPoints}/${QUEST_MAX} words`
+    )
   }
 
   if (!CHANNEL) {
@@ -194,13 +198,31 @@ const checkWord = async (message: Message): Promise<void> => {
   }
 
   await CHANNEL.send({
-    content: `-# > \`${name}\` guessed the word \`${WORD}\` for \`${points}\` points`,
+    content: `-# > \`${name}\` guessed the word \`${WORD}\` for \`${points.points}\` points\n-# > Quest: Completed \`${points.questPoints}/${QUEST_MAX}\` words`,
     flags: MessageFlags.SuppressNotifications
   })
     .then((message: Message): void => {
       MESSAGES.push(message.id)
 
       WORD = null
+    })
+    .then(async (): Promise<Message | null> => {
+      if (!points.questPoints) {
+        return await CHANNEL!.send({
+          content: `-# > \`${name}\` completed quest for \`${QUEST_POINTS}\` points!`,
+          flags: MessageFlags.SuppressNotifications
+        })
+      }
+      return null
+    })
+    .then((message: Message | null): void => {
+      if (message) {
+        MESSAGES.push(message.id)
+
+        if (Bun.env.DEBUG) {
+          info(`${name} completed quest for ${QUEST_POINTS} points!`)
+        }
+      }
     })
     .then(async (): Promise<Message> => {
       if (!TIMEOUT) {

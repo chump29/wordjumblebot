@@ -10,8 +10,9 @@ import {
   type User
 } from "discord.js"
 
+import { info } from "@postfmly/logger"
+
 import { resetPoints } from "../../utils/db.ts"
-import { info } from "../../utils/logger.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()

@@ -1,9 +1,8 @@
-import { info } from "./logger.ts"
+import { info } from "@postfmly/logger"
 
 let SERVER: Bun.Server<undefined> | null = null
 
 const DEFAULT_PORT: number = 8004
-
 const PORT: number = Bun.env.LOGO_PORT ? Number(Bun.env.LOGO_PORT) : DEFAULT_PORT
 
 const logo = async (): Promise<void> => {

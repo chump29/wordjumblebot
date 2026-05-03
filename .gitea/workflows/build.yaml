@@ -7,6 +7,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  BUN_INSTALL_CACHE_DIR: /tmp/.bun-cache
+
 jobs:
   check:
     runs-on: amd64
@@ -19,14 +22,9 @@ jobs:
 
       - name: Get Bun cache
         uses: actions/cache@v5
-        env:
-          BUN_INSTALL_CACHE_DIR: /tmp/.bun-cache
         with:
           key: bun-${{ github.event.repository.name }}-${{ hashFiles('./bun.lock') }}
           path: ${{ env.BUN_INSTALL_CACHE_DIR }}
-
-      - name: Install rsync
-        uses: GuillaumeFalourd/setup-rsync@v1.2
 
       - name: Install dependencies
         env:
@@ -51,7 +49,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
 
       - name: Build and push
-        run: docker buildx build --platform linux/amd64 --tag git.postfmly.com/admin/wordjumblebot:amd64 --push .
+        run: docker buildx build --platform linux/amd64 --tag
+          git.postfmly.com/admin/wordjumblebot:amd64 --push .
 
   arm64:
     needs: [ check ]
@@ -68,7 +67,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
 
       - name: Build and push
-        run: docker buildx build --platform linux/arm64 --tag git.postfmly.com/admin/wordjumblebot:arm64 --push .
+        run: docker buildx build --platform linux/arm64 --tag
+          git.postfmly.com/admin/wordjumblebot:arm64 --push .
 
   manifest:
     needs: [ amd64, arm64 ]

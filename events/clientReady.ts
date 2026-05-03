@@ -3,7 +3,8 @@ import { parse } from "node:path"
 
 import { type Client, type RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord.js"
 
-import { info } from "../utils/logger.ts"
+import { info } from "@postfmly/logger"
+
 import { type ICommandFile } from "./loadCommands.ts"
 
 const invoke = async (client: Client): Promise<void> => {

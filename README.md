@@ -4,9 +4,9 @@
 
 ---
 
-![Biome](https://img.shields.io/badge/Biome-^2.4.13-informational?style=plastic&logo=biome) &nbsp;
+![Biome](https://img.shields.io/badge/Biome-^2.4.14-informational?style=plastic&logo=biome) &nbsp;
 ![Bun](https://img.shields.io/badge/Bun-~1.3.13-informational?style=plastic&logo=bun) &nbsp;
-![discord.js](https://img.shields.io/badge/discord.js-^14.26.3-informational?style=plastic&logo=discord.js) &nbsp;
+![discord.js](https://img.shields.io/badge/discord.js-^14.26.4-informational?style=plastic&logo=discord.js) &nbsp;
 ![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.1-informational?style=plastic&logo=drizzle)
 ![SQLite](https://img.shields.io/badge/SQLite-3.49.2-informational?style=plastic&logo=sqlite)
 
@@ -109,22 +109,46 @@
 
 #### Environment Variables:
 
-|       📝 Description       |   📌 Variable   |   {...} Value    |
-|:--------------------------:|:---------------:|:----------------:|
-|       Autostart Game       |    AUTOSTART    |  true/**false**  |
-|     Message Channel ID     |   CHANNEL_ID    |   [channel id]   |
-|          DB Name           |     DB_NAME     | wordjumblebot.db |
-|          DB Path           |     DB_PATH     |      ./db/       |
-|           Debug            |    IS_DEBUG     |  true/**false**  |
-|      Logo Server Port      |    LOGO_PORT    |       8004       |
-|      Run Logo Server       |   LOGO_SERVER   |  **true**/false  |
-|          Logo URL          |    LOGO_URL     |    [logo url]    |
-|    Maximum Word Length     |   MAX_LENGTH    |   0 (disable)    |
-|    Minimum Word Length     |   MIN_LENGTH    | 5 (must be >=3)  |
-|          Bot Name          |      NAME       |  WordJumbleBot   |
-|     Message Rate Limit     |      RATE       |        1s        |
-|  Wait Time Between Words   |     TIMEOUT     |        2m        |
-|         Bot Token          |      TOKEN      |     [token]      |
+|     📝 Description      |   📌 Variable   |   {...} Value    |
+|:-----------------------:|:---------------:|:----------------:|
+|     Autostart Game      |    AUTOSTART    |  true/**false**  |
+|   Message Channel ID    |   CHANNEL_ID    |   [channel id]   |
+|         DB Name         |     DB_NAME     | wordjumblebot.db |
+|         DB Path         |     DB_PATH     |      ./db/       |
+|          Debug          |    IS_DEBUG     |  true/**false**  |
+|    Logo Server Port     |    LOGO_PORT    |       8004       |
+|     Run Logo Server     |   LOGO_SERVER   |  **true**/false  |
+|        Logo URL         |    LOGO_URL     |    [logo url]    |
+|   Maximum Word Length   |   MAX_LENGTH    |   0 (disable)    |
+|   Minimum Word Length   |   MIN_LENGTH    | 5 (must be >=3)  |
+|        Bot Name         |      NAME       |  WordJumbleBot   |
+|     Points Modifier     | POINTS_MODIFIER |        3         |
+|     Quest Max Words     |    QUEST_MAX    |        10        |
+|      Quest Points       |  QUEST_POINTS   |       100        |
+|   Message Rate Limit    |      RATE       |        1s        |
+| Wait Time Between Words |     TIMEOUT     |        2m        |
+|        Bot Token        |      TOKEN      |     [token]      |
+
+#### Points Calculation:
+
+```typescript
+const getWordPoints = async (word: string): Promise<number> => {
+  return Math.floor(
+    word
+      .trim()
+      .toUpperCase()
+      .split("")
+      .reduce((sum: number, char: string): number => sum + char.charCodeAt(0), 0) / POINTS_MODIFIER
+  )
+}
+
+const word: string = "test"
+const points: number = getWordPoints(word)
+// T=84, E=69, S=83, T=84
+// 84 + 69 + 83 + 84 = 320
+// 320 / 3 = 106.6666666666667 ≈ 106
+
+```
 
 #### Deployment:
 

@@ -9,4 +9,18 @@ const users = sqliteTable("users", {
 
 type IUser = InferSelectModel<typeof users>
 
-export { type IUser, users }
+const quests = sqliteTable("quests", {
+  id: integer().primaryKey(),
+  points: integer().notNull(),
+  userId: integer()
+    .notNull()
+    .unique()
+    .references(() => users.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade"
+    })
+})
+
+type IQuest = InferSelectModel<typeof quests>
+
+export { type IQuest, type IUser, quests, users }
