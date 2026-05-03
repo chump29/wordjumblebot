@@ -14,7 +14,7 @@ import { RUNNING, stopWord } from "../../utils/loadWord.ts"
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   return new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
-    .setDescription("Stop listening for word")
+    .setDescription("Stop jumbling words")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .toJSON()
 }
