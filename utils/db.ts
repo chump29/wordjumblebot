@@ -4,13 +4,16 @@ import { Database, SQLiteError } from "bun:sqlite"
 
 import { info } from "@postfmly/logger"
 
-import { desc, eq } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 import { drizzle, type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
 
 import { type IQuest, type IUser, quests, users } from "../db/schema.ts"
 
-interface IUserPoints {
+interface IJustPoints {
   points: number
+}
+
+interface IUserPoints extends IJustPoints {
   user: IUser
 }
 
@@ -18,8 +21,7 @@ interface IQuestPoints extends IUserPoints {
   quest: IQuest
 }
 
-interface IPoints {
-  points: number
+interface IPoints extends IJustPoints {
   questPoints: number
 }
 
@@ -46,13 +48,18 @@ const openDatabase = async (): Promise<void> => {
     create: true,
     strict: true
   })
+
   DB = drizzle({
     client: SQLITE,
     jit: true
   })
-  DB.run("PRAGMA journal_mode = WAL;")
-  DB.run("PRAGMA wal_checkpoint(TRUNCATE);")
-  DB.run("PRAGMA foreign_keys = ON;")
+
+  DB.run(
+    sql.raw(`
+      PRAGMA journal_mode = WAL;
+      PRAGMA wal_checkpoint(TRUNCATE);
+      PRAGMA foreign_keys = ON;`)
+  )
 
   try {
     await DB.select().from(users)
@@ -62,21 +69,21 @@ const openDatabase = async (): Promise<void> => {
         info("Creating tables...")
       }
 
-      let table: string = `
-      CREATE TABLE users(
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
-        points INTEGER NOT NULL
-      )`
-      SQLITE.run(table)
+      DB.run(
+        sql.raw(`
+          CREATE TABLE users(
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL UNIQUE,
+            points INTEGER NOT NULL);`)
+      )
 
-      table = `
-      CREATE TABLE quests(
-        id INTEGER PRIMARY KEY,
-        userId INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        points INTEGER NOT NULL
-      )`
-      SQLITE.run(table)
+      DB.run(
+        sql.raw(`
+          CREATE TABLE quests(
+            id INTEGER PRIMARY KEY,
+            userId INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+            points INTEGER NOT NULL);`)
+      )
     } else {
       throw e
     }

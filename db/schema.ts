@@ -16,8 +16,7 @@ const quests = sqliteTable("quests", {
     .notNull()
     .unique()
     .references(() => users.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade"
+      onDelete: "cascade"
     })
 })
 
