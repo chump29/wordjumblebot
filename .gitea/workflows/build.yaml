@@ -34,6 +34,9 @@ jobs:
       - name: Linting
         run: bun run lint:ci
 
+      - name: Testing
+        run: bun run test
+
   amd64:
     needs: [ check ]
     runs-on: amd64

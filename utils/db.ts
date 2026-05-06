@@ -39,11 +39,20 @@ const QUEST_POINTS_DEFAULT: number = 100
 const QUEST_POINTS: number = isNaN(Number(Bun.env.QUEST_POINTS)) ? QUEST_POINTS_DEFAULT : Number(Bun.env.QUEST_POINTS)
 
 const openDatabase = async (): Promise<void> => {
+  if (!Bun.env.DB_PATH) {
+    throw new Error("Invalid DB_PATH")
+  }
+
+  if (!Bun.env.DB_NAME) {
+    throw new Error("Invalid DB_NAME")
+  }
+
   await mkdir(Bun.env.DB_PATH, {
     recursive: true
   })
 
   const DB_STR: string = `${Bun.env.DB_PATH}${Bun.env.DB_NAME}`
+
   SQLITE = new Database(DB_STR, {
     create: true,
     strict: true
@@ -66,7 +75,7 @@ const openDatabase = async (): Promise<void> => {
   } catch (e: unknown) {
     if (e instanceof SQLiteError && e.message.includes("no such table")) {
       if (Bun.env.DEBUG) {
-        info("Creating tables...")
+        info("Creating tables")
       }
 
       DB.run(
@@ -271,6 +280,7 @@ const closeDatabase = async (): Promise<void> => {
 
 export {
   closeDatabase,
+  DB,
   getAll,
   getWordPoints,
   type IPoints,
@@ -279,4 +289,4 @@ export {
   QUEST_POINTS,
   resetPoints,
   updatePoints
-}
+} // ! NOTE: exporting DB for testing

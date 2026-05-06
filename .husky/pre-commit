@@ -2,4 +2,6 @@
 
 bunx lint-staged
 
+bun run test
+
 #exit 1

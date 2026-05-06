@@ -15,6 +15,10 @@ import { checkRate } from "../../utils/checkRate.ts"
 import { COUNT, MAX, MIN } from "../../utils/loadWord.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
+  if (!Bun.env.NAME) {
+    throw new Error("Invalid NAME")
+  }
+
   return new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
     .setDescription(`Information about ${Bun.env.NAME}`)
@@ -26,6 +30,14 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
   if (await checkRate(interaction)) {
     return
+  }
+
+  if (!Bun.env.LOGO_URL) {
+    throw new Error("Invalid LOGO_URL")
+  }
+
+  if (!Bun.env.NAME) {
+    throw new Error("Invalid NAME")
   }
 
   await interaction.reply({

@@ -12,6 +12,10 @@ import {
 import { checkRate } from "../../utils/checkRate.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
+  if (!Bun.env.NAME) {
+    throw new Error("Invalid NAME")
+  }
+
   return new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
     .setDescription(`Ping ${Bun.env.NAME}`)

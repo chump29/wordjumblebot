@@ -1,0 +1,124 @@
+import { glob, unlink } from "node:fs/promises"
+
+import { afterAll, beforeAll, describe, expect, test } from "bun:test"
+
+import { info } from "@postfmly/logger"
+
+import { desc, eq } from "drizzle-orm"
+import { type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
+import { type FunctionsVersioning, seed } from "drizzle-seed"
+
+// biome-ignore lint/performance/noNamespaceImport: used for seeding
+import * as schema from "../db/schema.ts"
+import {
+  closeDatabase,
+  DB,
+  getAll,
+  getWordPoints,
+  type IPoints,
+  openDatabase,
+  resetPoints,
+  updatePoints
+} from "./db.ts"
+
+const TEST_POINTS: number = 106 // * T=84 + E=69 + S=83 + T=84 / 3 ≈ 106
+
+const deleteFiles = async (): Promise<void> => {
+  for await (const file of glob(`${Bun.env.DB_PATH}/${Bun.env.DB_NAME}*`)) {
+    info(`Deleting ${file}`)
+    await unlink(file)
+  }
+}
+
+beforeAll(async (): Promise<void> => {
+  await deleteFiles()
+    .then(async (): Promise<void> => await openDatabase())
+    .then(async (): Promise<void> => {
+      await seed(DB as SQLiteBunDatabase, schema).refine((f: FunctionsVersioning) => ({
+        quests: {
+          columns: {
+            points: f.int({
+              maxValue: 9,
+              minValue: 9
+            })
+          }
+        },
+        users: {
+          columns: {
+            name: f.fullName({
+              isUnique: true
+            }),
+            points: f.int({
+              isUnique: true,
+              maxValue: 500,
+              minValue: 100
+            })
+          }
+        }
+      }))
+    })
+})
+
+afterAll(async (): Promise<void> => {
+  await deleteFiles().then(async (): Promise<void> => {
+    info("Closing database")
+    await closeDatabase()
+  })
+})
+
+describe("db", (): void => {
+  test("openDatabase - no DB_PATH", async (): Promise<void> => {
+    const bak: string = Bun.env.DB_PATH
+    Bun.env.DB_PATH = ""
+    expect(async (): Promise<void> => await openDatabase()).toThrowError("Invalid DB_PATH")
+    Bun.env.DB_PATH = bak
+  })
+
+  test("openDatabase - no DB_NAME", async (): Promise<void> => {
+    const bak: string = Bun.env.DB_NAME
+    Bun.env.DB_NAME = ""
+    expect(async (): Promise<void> => await openDatabase()).toThrowError("Invalid DB_NAME")
+    Bun.env.DB_NAME = bak
+  })
+
+  test("getAll", async (): Promise<void> => {
+    const users: schema.IUser[] = await getAll()
+    expect(users.length).toBe(10)
+    expect(users[0]!.points).toBeGreaterThan(users[9]!.points)
+  })
+
+  test("getWordPoints", async (): Promise<void> => {
+    expect(await getWordPoints("test")).toBe(TEST_POINTS)
+  })
+
+  test("resetPoints - user", async (): Promise<void> => {
+    const [user]: schema.IUser[] = await DB!.select().from(schema.users).limit(1)
+    await resetPoints(user!.name)
+
+    const [updatedUser]: schema.IUser[] = await DB!.select().from(schema.users).where(eq(schema.users.name, user!.name))
+    expect(updatedUser!.points).toBe(0)
+  })
+
+  test("updatePoints", async (): Promise<void> => {
+    const [user]: schema.IUser[] = await DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    const points: IPoints = await updatePoints(user!.name, "test")
+
+    const [updatedUser]: schema.IUser[] = await DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    expect(updatedUser!.points).toBe(user!.points + points.points + Number(Bun.env.QUEST_POINTS))
+  })
+
+  test("updatePoints - no name", async (): Promise<void> => {
+    expect(async (): Promise<IPoints> => await updatePoints("", "test")).toThrowError("Invalid name")
+  })
+
+  test("updatePoints - no word", async (): Promise<void> => {
+    expect(async (): Promise<IPoints> => await updatePoints("test", "")).toThrowError("Invalid word")
+  })
+
+  test("resetPoints - all", async (): Promise<void> => {
+    await resetPoints()
+    const [user]: schema.IUser[] = await DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    expect(user!.points).toBe(0)
+    expect()
+  })
+})

@@ -42,11 +42,7 @@ let MESSAGES: Snowflake[] = []
 let randomWord: RandomWords | null = null
 
 const getChannel = async (): Promise<TextChannel> => {
-  if (!CLIENT) {
-    throw new Error("Invalid client")
-  }
-
-  return await CLIENT.channels.fetch(Bun.env.CHANNEL_ID).then((channel: Channel | null) => {
+  return await CLIENT!.channels.fetch(Bun.env.CHANNEL_ID).then((channel: Channel | null) => {
     if (!channel) {
       throw new Error("Invalid channel")
     }
@@ -63,7 +59,7 @@ const loadSettings = async (client: Client): Promise<void> => {
   CLIENT = client
   CHANNEL = await getChannel()
 
-  if (Bun.env.MIN_LENGTH.length && !isNaN(Number(Bun.env.MIN_LENGTH)) && Number(Bun.env.MIN_LENGTH) < MIN_LENGTH) {
+  if (!Bun.env.MIN_LENGTH.length || isNaN(Number(Bun.env.MIN_LENGTH)) || Number(Bun.env.MIN_LENGTH) < MIN_LENGTH) {
     throw new Error("Invalid MIN_LENGTH")
   }
 
@@ -132,7 +128,7 @@ const clearMessages = async (): Promise<void> => {
     .then((messages: Collection<Snowflake, Message | PartialMessage | undefined>): void => {
       MESSAGES = []
 
-      if (Bun.env.DEBUG && messages) {
+      if (Bun.env.DEBUG && messages.size) {
         info(`Cleared ${pluralize("message", messages.size)}`)
       }
     })
@@ -188,7 +184,7 @@ const checkWord = async (message: Message): Promise<void> => {
 
   if (Bun.env.DEBUG) {
     info(
-      `${name} guessed the word ${WORD} for ${points.points} points`,
+      `${name} guessed the word ${WORD.toUpperCase()} for ${points.points} points`,
       `Quest: ${points.questPoints}/${QUEST_MAX} words`
     )
   }

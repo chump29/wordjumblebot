@@ -3,9 +3,13 @@ import { info } from "@postfmly/logger"
 let SERVER: Bun.Server<undefined> | null = null
 
 const DEFAULT_PORT: number = 8004
-const PORT: number = Bun.env.LOGO_PORT ? Number(Bun.env.LOGO_PORT) : DEFAULT_PORT
+const PORT: number = isNaN(Number(Bun.env.LOGO_PORT)) ? DEFAULT_PORT : Number(Bun.env.LOGO_PORT)
 
 const logo = async (): Promise<void> => {
+  if (!Bun.env.LOGO_URL) {
+    throw new Error("Invalid LOGO_URL")
+  }
+
   if (Bun.env.LOGO_SERVER === "true") {
     SERVER = Bun.serve({
       development: Bun.env.NODE_ENV !== "production",
