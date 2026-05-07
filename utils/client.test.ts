@@ -53,8 +53,15 @@ describe("client", (): void => {
   })
 
   test("client", async (): Promise<void> => {
+    const onSpy: jest.Mock = spyOn(process, "on")
+
     const clientObj: Client = await client()
     expect(clientObj).not.toBeUndefined()
+
+    expect(onSpy).toHaveBeenNthCalledWith(1, "SIGINT", expect.any(Function))
+    expect(onSpy).toHaveBeenNthCalledWith(2, "SIGTERM", expect.any(Function))
+    process.emit("SIGINT")
+    process.emit("SIGTERM")
 
     mock.module("./loadWord.ts", (): unknown => {
       return {
@@ -87,7 +94,7 @@ describe("client", (): void => {
   test("login pass", async (): Promise<void> => {
     mock.module("./client.ts", (): unknown => {
       return {
-        CLIENT: {
+        TEST_CLIENT: {
           login: jest.fn(),
           user: {
             displayName: Bun.env.NAME,

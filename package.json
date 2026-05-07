@@ -22,7 +22,9 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "clean": "rimraf node_modules bun.lock",
+    "clean": "rimraf node_modules bun.lock coverage",
+    "clean:coverage": "rimraf coverage",
+    "clean:coverage:tmp": "rimraf coverage/.*.tmp",
     "clean:db": "rimraf db/wordjumblebot.db*",
     "dev": "bun --watch run index.ts",
     "preinstall": "bunx only-allow bun",
@@ -33,7 +35,7 @@
     "lint:env": "dotenv-linter check .",
     "prepare": "husky",
     "prod": "bun run index.ts",
-    "test": "bun test --coverage --isolate"
+    "test": "bun test --coverage --isolate --coverage-reporter=lcov --coverage-reporter=text && bun run clean:coverage:tmp"
   },
   "lint-staged": {
     ".env*": "dotenv-linter check",
@@ -55,7 +57,7 @@
     "@nano-faker/number": "^1.0.1",
     "@nano-faker/patterns": "^1.0.1",
     "@nano-faker/person": "^1.0.1",
-    "@postfmly/config": "^1.2.14",
+    "@postfmly/config": "^1.2.15",
     "@types/ms": "^2.1.0",
     "@types/pluralize": "^0.0.33",
     "drizzle-seed": "1.0.0-rc.2",

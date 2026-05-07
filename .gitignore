@@ -1,4 +1,5 @@
 .env.local
 .vscode
+coverage/
 db/wordjumblebot*
 node_modules/

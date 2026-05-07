@@ -10,7 +10,8 @@
 ![Drizzle](https://img.shields.io/badge/Drizzle-$_drizzle-informational?style=plastic&logo=drizzle)
 ![SQLite](https://img.shields.io/badge/SQLite-$_sqlite-informational?style=plastic&logo=sqlite)
 
-![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg)
+![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg) &nbsp;
+![Coverage](https://img.shields.io/badge/Coverage-96.79%25-success?style=plastic&logo=jest)
 
 ![License](https://img.shields.io/github/license/chump29/wordjumblebot?style=plastic&color=blueviolet&label=License&logo=gplv3)
 
@@ -95,15 +96,15 @@
 
 #### Scripts:
 
-|    📋 Task     |     🔧 Command (Full)     | 🔧 Command (Short) |
-|:--------------:|:-------------------------:|:------------------:|
-| Lint All (DEV) |      `bun run lint`       |     `bun lint`     |
-| Lint All (CI)  |     `bun run lint:ci`     |   `bun lint:ci`    |
-|   Lint Biome   |   `bun run lint:biome`    |  `bun lint:biome`  |
-|    Lint ENV    |    `bun run lint:env`     |   `bun lint:env`   |
-|    Run DEV     |       `bun run dev`       |     `bun dev`      |
-|    Run PROD    |      `bun run prod`       |     `bun prod`     |
-|      Test      | `bun run test` (coverage) |     `bun test`     |
+|    📋 Task     |  🔧 Command (Full)   | 🔧 Command (Short) |
+|:--------------:|:--------------------:|:------------------:|
+| Lint All (DEV) |    `bun run lint`    |     `bun lint`     |
+| Lint All (CI)  |  `bun run lint:ci`   |   `bun lint:ci`    |
+|   Lint Biome   | `bun run lint:biome` |  `bun lint:biome`  |
+|    Lint ENV    |  `bun run lint:env`  |   `bun lint:env`   |
+|    Run DEV     |    `bun run dev`     |     `bun dev`      |
+|    Run PROD    |    `bun run prod`    |     `bun prod`     |
+|      Test      |    `bun run test`    |      &mdash;       |
 
 ---
 
@@ -120,18 +121,19 @@
 |          Debug          |    IS_DEBUG     |  true/**false**  |
 |        Logo URL         |    LOGO_URL     |      [url]       |
 |   Maximum Word Length   |   MAX_LENGTH    |  0<sup>1</sup>   |
-|   Minimum Word Length   |   MIN_LENGTH    |  5<sup>2</sup>   |
+|   Minimum Word Length   |   MIN_LENGTH    | 5<sup>2,3</sup>  |
 |        Bot Name         |      NAME       |  WordJumbleBot   |
 |     Points Modifier     | POINTS_MODIFIER |        3         |
 |     Quest Max Words     |    QUEST_MAX    |        10        |
 |      Quest Points       |  QUEST_POINTS   |       100        |
-|   Message Rate Limit    |      RATE       |        1s        |
 | Wait Time Between Words |     TIMEOUT     |        2m        |
 |        Bot Token        |      TOKEN      |     [token]      |
 
 <sup>1</sup> 0=disable (will default to *maximum* word length)
 
 <sup>2</sup> 0=disable (will default to *minimum* word length)
+
+<sup>3</sup> Minimum is 3 (limited by words list)
 
 ##### From `@postfmly/logoserver`:
 

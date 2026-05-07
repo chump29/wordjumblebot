@@ -7,6 +7,7 @@ import { closeDatabase } from "./db.ts"
 import { checkWord, RUNNING, stopWord } from "./loadWord.ts"
 
 let CLIENT: Client | null = null
+const TEST_CLIENT: Client | null = null
 
 let isShutdown: boolean = false
 
@@ -70,6 +71,8 @@ const client = async (): Promise<Client> => {
 }
 
 const login = async (): Promise<Client> => {
+  CLIENT = TEST_CLIENT ?? CLIENT
+
   if (!CLIENT) {
     throw new Error("Invalid CLIENT")
   }
@@ -87,4 +90,4 @@ const login = async (): Promise<Client> => {
   return CLIENT
 }
 
-export { CLIENT, client, login, shutdown } // ! NOTE: exporting CLIENT for testing
+export { client, login, shutdown, TEST_CLIENT }
