@@ -95,15 +95,15 @@
 
 #### Scripts:
 
-|    📋 Task     |  🔧 Command (Full)   | 🔧 Command (Short) |
-|:--------------:|:--------------------:|:------------------:|
-| Lint All (DEV) |    `bun run lint`    |     `bun lint`     |
-| Lint All (CI)  |  `bun run lint:ci`   |   `bun lint:ci`    |
-|   Lint Biome   | `bun run lint:biome` |  `bun lint:biome`  |
-|    Lint ENV    |  `bun run lint:env`  |   `bun lint:env`   |
-|    Run DEV     |    `bun run dev`     |     `bun dev`      |
-|    Run PROD    |    `bun run prod`    |     `bun prod`     |
-|      Test      |    `bun run test`    |      &mdash;       |
+|    📋 Task     |     🔧 Command (Full)     | 🔧 Command (Short) |
+|:--------------:|:-------------------------:|:------------------:|
+| Lint All (DEV) |      `bun run lint`       |     `bun lint`     |
+| Lint All (CI)  |     `bun run lint:ci`     |   `bun lint:ci`    |
+|   Lint Biome   |   `bun run lint:biome`    |  `bun lint:biome`  |
+|    Lint ENV    |    `bun run lint:env`     |   `bun lint:env`   |
+|    Run DEV     |       `bun run dev`       |     `bun dev`      |
+|    Run PROD    |      `bun run prod`       |     `bun prod`     |
+|      Test      | `bun run test` (coverage) |     `bun test`     |
 
 ---
 
@@ -118,6 +118,7 @@
 |         DB Name         |     DB_NAME     | wordjumblebot.db |
 |         DB Path         |     DB_PATH     |      ./db/       |
 |          Debug          |    IS_DEBUG     |  true/**false**  |
+|        Logo URL         |    LOGO_URL     |      [url]       |
 |   Maximum Word Length   |   MAX_LENGTH    |  0<sup>1</sup>   |
 |   Minimum Word Length   |   MIN_LENGTH    |  5<sup>2</sup>   |
 |        Bot Name         |      NAME       |  WordJumbleBot   |

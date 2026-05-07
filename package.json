@@ -33,7 +33,7 @@
     "lint:env": "dotenv-linter check .",
     "prepare": "husky",
     "prod": "bun run index.ts",
-    "test": "bun test --coverage --isolate"
+    "test": "bun test --coverage"
   },
   "lint-staged": {
     ".env*": "dotenv-linter check",
