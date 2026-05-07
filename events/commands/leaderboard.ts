@@ -11,8 +11,9 @@ import {
   SlashCommandBuilder
 } from "discord.js"
 
+import { checkRate } from "@postfmly/checkrate"
+
 import { type IUser } from "../../db/schema.ts"
-import { checkRate } from "../../utils/checkRate.ts"
 import { getAll } from "../../utils/db.ts"
 
 const create = async (): Promise<RESTPostAPIChatInputApplicationCommandsJSONBody> => {

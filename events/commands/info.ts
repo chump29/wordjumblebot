@@ -11,7 +11,8 @@ import {
   SlashCommandBuilder
 } from "discord.js"
 
-import { checkRate } from "../../utils/checkRate.ts"
+import { checkRate } from "@postfmly/checkrate"
+
 import { COUNT, MAX, MIN } from "../../utils/loadWord.ts"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {

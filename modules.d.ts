@@ -14,7 +14,6 @@ declare module "bun" {
     POINTS_MODIFIER: string
     QUEST_MAX: string
     QUEST_POINTS: string
-    RATE: string
     SQL_DEBUG: boolean
     TIMEOUT: string
     TOKEN: string

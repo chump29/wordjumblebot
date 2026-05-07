@@ -142,6 +142,12 @@
 |   Local Path   |  LOGO_PATH  |      [path]       |
 |      Port      |  LOGO_PORT  | **Random**/[port] |
 
+##### From `@postfmly/checkrate`:
+
+| 📝 Description | 📌 Variable | {...} Value |
+|:--------------:|:-----------:|:-----------:|
+|   Rate Limit   |    RATE     |     1s      |
+
 #### Points Calculation:
 
 ```typescript

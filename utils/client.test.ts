@@ -44,6 +44,8 @@ describe("client", (): void => {
     })
 
     expect(async (): Promise<void> => await shutdown("TEST")).toThrowError("0")
+
+    await shutdown("TEST2") // * NOTE: to test isShutdown
   })
 
   test("login fail - client", (): void => {

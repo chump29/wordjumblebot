@@ -9,7 +9,7 @@ import {
   SlashCommandBuilder
 } from "discord.js"
 
-import { checkRate } from "../../utils/checkRate.ts"
+import { checkRate } from "@postfmly/checkrate"
 
 const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
   if (!Bun.env.NAME) {
