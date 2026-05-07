@@ -11,7 +11,7 @@ services:
       - LOGO_NAME=wordjumblebot.webp
       - LOGO_PATH=./utils/images
       - LOGO_PORT=8004
-      - LOGO_URL=https://wordjumblebot.postfmly.com/wordjumblebot.webp
+      - LOGO_URL=https://wordjumblebot.postfmly.us/wordjumblebot.webp
       - TZ=America/Chicago
     env_file: .env
     labels:
