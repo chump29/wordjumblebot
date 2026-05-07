@@ -58,7 +58,6 @@
     "@postfmly/config": "^1.2.14",
     "@types/ms": "^2.1.0",
     "@types/pluralize": "^0.0.33",
-    "drizzle-query-logger": "^1.1.2",
     "drizzle-seed": "1.0.0-rc.2",
     "husky": "^9.1.7",
     "jest-mock": "^30.3.0",

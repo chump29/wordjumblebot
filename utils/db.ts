@@ -6,7 +6,6 @@ import { info } from "@postfmly/logger"
 
 import { desc, eq, sql } from "drizzle-orm"
 import { drizzle, type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
-import { EnhancedQueryLogger } from "drizzle-query-logger"
 
 import { type IQuest, type IUser, quests, users } from "../db/schema.ts"
 
@@ -66,8 +65,7 @@ const openDatabase = async (): Promise<void> => {
 
   DB = drizzle({
     client: SQLITE,
-    jit: true,
-    logger: Bun.env.SQL_DEBUG ? new EnhancedQueryLogger() : undefined
+    jit: true
   })
 
   DB.run(
