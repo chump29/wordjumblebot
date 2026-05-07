@@ -27,10 +27,8 @@ let COUNT: number = 0
 
 let WORD: string | null = null
 
-const MIN_LENGTH: number = 3
-const MAX_LENGTH: number = 0
-let MIN: number = MIN_LENGTH
-let MAX: number = MAX_LENGTH
+let MIN: number = 0
+let MAX: number = 0
 
 let RUNNING: boolean = false
 
@@ -59,16 +57,13 @@ const loadSettings = async (client: Client): Promise<void> => {
   CLIENT = client
   CHANNEL = await getChannel()
 
-  if (!Bun.env.MIN_LENGTH.length || isNaN(Number(Bun.env.MIN_LENGTH)) || Number(Bun.env.MIN_LENGTH) < MIN_LENGTH) {
-    throw new Error("Invalid MIN_LENGTH")
-  }
-
-  MIN = isNaN(Number(Bun.env.MIN_LENGTH)) ? MIN_LENGTH : Number(Bun.env.MIN_LENGTH)
-  MAX = isNaN(Number(Bun.env.MAX_LENGTH)) ? MAX_LENGTH : Number(Bun.env.MAX_LENGTH)
+  MIN = isNaN(Number(Bun.env.MIN_LENGTH)) ? 0 : Number(Bun.env.MIN_LENGTH)
+  MIN = MIN === 0 ? Math.min(...words.map((word: string): number => word.length)) : MIN
+  MAX = isNaN(Number(Bun.env.MAX_LENGTH)) ? 0 : Number(Bun.env.MAX_LENGTH)
   MAX = MAX === 0 ? Math.max(...words.map((word: string): number => word.length)) : MAX
 
   if (MAX < MIN) {
-    MAX = MAX_LENGTH
+    MAX = MIN
   }
 
   allWords = words.filter((word: string): boolean => {

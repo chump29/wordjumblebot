@@ -8,6 +8,9 @@ services:
     volumes:
       - db:/app/db
     environment:
+      - LOGO_NAME=wordjumblebot.webp
+      - LOGO_PATH=./utils/images
+      - LOGO_PORT=8004
       - TZ=America/Chicago
     env_file: .env
     labels:

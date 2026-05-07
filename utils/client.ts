@@ -1,10 +1,10 @@
 import { ActivityType, Client, Events, GatewayIntentBits, type Message } from "discord.js"
 
 import { info } from "@postfmly/logger"
+import { stopLogoServer } from "@postfmly/logoserver"
 
 import { closeDatabase } from "./db.ts"
 import { checkWord, RUNNING, stopWord } from "./loadWord.ts"
-import { SERVER } from "./logo.ts"
 
 let CLIENT: Client | null = null
 
@@ -35,7 +35,7 @@ const shutdown = async (event: string): Promise<void> => {
       }
     })
     .then(async (): Promise<void> => await CLIENT?.destroy())
-    .then(async (): Promise<void> => await SERVER?.stop(true))
+    .then(async (): Promise<void> => await stopLogoServer())
     .then((): void => process.exit(0))
 }
 

@@ -6,9 +6,6 @@ declare module "bun" {
     DB_PATH: string
     DEBUG: boolean
     IS_DEBUG: string
-    LOGO_PORT: string
-    LOGO_SERVER: string
-    LOGO_URL: string
     MAX_LENGTH: string
     MIN_LENGTH: string
     NAME: string
@@ -17,6 +14,7 @@ declare module "bun" {
     QUEST_MAX: string
     QUEST_POINTS: string
     RATE: string
+    SQL_DEBUG: boolean
     TIMEOUT: string
     TOKEN: string
   }

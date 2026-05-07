@@ -1,7 +1,5 @@
 *
 
-!.env
-!.env.production
 !bun.lock
 !db/schema.ts
 !events/

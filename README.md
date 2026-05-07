@@ -4,13 +4,14 @@
 
 ---
 
-![Biome](https://img.shields.io/badge/Biome-^2.4.14-informational?style=plastic&logo=biome) &nbsp;
+![Biome](https://img.shields.io/badge/Biome-ul-informational?style=plastic&logo=biome) &nbsp;
 ![Bun](https://img.shields.io/badge/Bun-~1.3.13-informational?style=plastic&logo=bun) &nbsp;
 ![discord.js](https://img.shields.io/badge/discord.js-^14.26.4-informational?style=plastic&logo=discord.js) &nbsp;
-![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.1-informational?style=plastic&logo=drizzle)
+![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.2-informational?style=plastic&logo=drizzle)
 ![SQLite](https://img.shields.io/badge/SQLite-3.49.2-informational?style=plastic&logo=sqlite)
 
-![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg) &nbsp;
+![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg)
+
 ![License](https://img.shields.io/github/license/chump29/wordjumblebot?style=plastic&color=blueviolet&label=License&logo=gplv3)
 
 ---
@@ -117,11 +118,8 @@
 |         DB Name         |     DB_NAME     | wordjumblebot.db |
 |         DB Path         |     DB_PATH     |      ./db/       |
 |          Debug          |    IS_DEBUG     |  true/**false**  |
-|    Logo Server Port     |    LOGO_PORT    |       8004       |
-|     Run Logo Server     |   LOGO_SERVER   |  **true**/false  |
-|        Logo URL         |    LOGO_URL     |    [logo url]    |
-|   Maximum Word Length   |   MAX_LENGTH    |   0 (disable)    |
-|   Minimum Word Length   |   MIN_LENGTH    | 5 (must be >=3)  |
+|   Maximum Word Length   |   MAX_LENGTH    |  0<sup>1</sup>   |
+|   Minimum Word Length   |   MIN_LENGTH    |  5<sup>2</sup>   |
 |        Bot Name         |      NAME       |  WordJumbleBot   |
 |     Points Modifier     | POINTS_MODIFIER |        3         |
 |     Quest Max Words     |    QUEST_MAX    |        10        |
@@ -129,6 +127,19 @@
 |   Message Rate Limit    |      RATE       |        1s        |
 | Wait Time Between Words |     TIMEOUT     |        2m        |
 |        Bot Token        |      TOKEN      |     [token]      |
+
+<sup>1</sup> 0=disable (will default to *maximum* word length)
+
+<sup>2</sup> 0=disable (will default to *minimum* word length)
+
+##### From `@postfmly/logoserver`:
+
+| 📝 Description | 📌 Variable |    {...} Value    |
+|:--------------:|:-----------:|:-----------------:|
+|   IPv4/IPv6    |  LOGO_IPv6  |  true/**false**   |
+|   Logo Name    |  LOGO_NAME  |    [filename]     |
+|   Local Path   |  LOGO_PATH  |      [path]       |
+|      Port      |  LOGO_PORT  | **Random**/[port] |
 
 #### Points Calculation:
 

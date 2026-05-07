@@ -67,13 +67,6 @@ describe("loadWords", (): void => {
     expect(async (): Promise<void> => await loadSettings(null as any)).toThrowError("Invalid client")
   })
 
-  test("loadSettings - no MIN_LENGTH", async (): Promise<void> => {
-    const bak: string = Bun.env.MIN_LENGTH
-    Bun.env.MIN_LENGTH = ""
-    expect(async (): Promise<void> => await loadSettings(client)).toThrowError("Invalid MIN_LENGTH")
-    Bun.env.MIN_LENGTH = bak
-  })
-
   test("loadSettings - no words", async (): Promise<void> => {
     mock.module("@wordlist/english-eff/all", (): unknown => {
       return {

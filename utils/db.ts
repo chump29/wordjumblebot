@@ -6,6 +6,7 @@ import { info } from "@postfmly/logger"
 
 import { desc, eq, sql } from "drizzle-orm"
 import { drizzle, type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
+import { EnhancedQueryLogger } from "drizzle-query-logger"
 
 import { type IQuest, type IUser, quests, users } from "../db/schema.ts"
 
@@ -38,6 +39,11 @@ const QUEST_MAX: number = isNaN(Number(Bun.env.QUEST_MAX)) ? QUEST_MAX_DEFAULT :
 const QUEST_POINTS_DEFAULT: number = 100
 const QUEST_POINTS: number = isNaN(Number(Bun.env.QUEST_POINTS)) ? QUEST_POINTS_DEFAULT : Number(Bun.env.QUEST_POINTS)
 
+Bun.env.DB_NAME = Bun.env.DB_NAME || "wordjumblebot.db"
+Bun.env.DB_PATH = Bun.env.DB_PATH || "./db/"
+
+Bun.env.SQL_DEBUG = false
+
 const openDatabase = async (): Promise<void> => {
   if (!Bun.env.DB_PATH) {
     throw new Error("Invalid DB_PATH")
@@ -60,7 +66,8 @@ const openDatabase = async (): Promise<void> => {
 
   DB = drizzle({
     client: SQLITE,
-    jit: true
+    jit: true,
+    logger: Bun.env.SQL_DEBUG ? new EnhancedQueryLogger() : undefined
   })
 
   DB.run(
