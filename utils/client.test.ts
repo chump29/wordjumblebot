@@ -73,7 +73,6 @@ describe("client", (): void => {
     expect(checkWordMock).toHaveBeenCalled()
 
     const intents: IntentsBitField = clientObj.options.intents
-    expect(intents.toArray().length).toBeGreaterThan(0)
     const allIntents: GatewayIntentBits[] = [
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,

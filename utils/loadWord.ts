@@ -27,7 +27,7 @@ let COUNT: number = 0
 
 let WORD: string | null = null
 
-let MIN: number = 0
+let MIN: number = 5
 let MAX: number = 0
 
 let RUNNING: boolean = false
