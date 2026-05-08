@@ -8,8 +8,7 @@ import { desc, eq } from "drizzle-orm"
 import { type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
 import { type FunctionsVersioning, seed } from "drizzle-seed"
 
-// biome-ignore lint/performance/noNamespaceImport: used for seeding
-import * as schema from "../db/schema.ts"
+import { type IUser, quests, users } from "../db/schema.ts"
 import {
   closeDatabase,
   getAll,
@@ -34,7 +33,10 @@ beforeAll(async (): Promise<void> => {
   await deleteFiles()
     .then(async (): Promise<void> => await openDatabase())
     .then(async (): Promise<void> => {
-      await seed(TEST_DB as SQLiteBunDatabase, schema).refine((f: FunctionsVersioning) => ({
+      await seed(TEST_DB as SQLiteBunDatabase, {
+        users,
+        quests
+      }).refine((f: FunctionsVersioning) => ({
         quests: {
           columns: {
             points: f.int({
@@ -68,7 +70,7 @@ afterAll(async (): Promise<void> => {
 
 describe("db", (): void => {
   test("getAll", async (): Promise<void> => {
-    const users: schema.IUser[] = await getAll()
+    const users: IUser[] = await getAll()
     expect(users.length).toBe(10)
     expect(users[0]!.points).toBeGreaterThan(users[9]!.points)
   })
@@ -78,25 +80,18 @@ describe("db", (): void => {
   })
 
   test("resetPoints - user", async (): Promise<void> => {
-    const [user]: schema.IUser[] = await TEST_DB!.select().from(schema.users).limit(1)
+    const [user]: IUser[] = await TEST_DB!.select().from(users).limit(1)
     await resetPoints(user!.name)
 
-    const [updatedUser]: schema.IUser[] = await TEST_DB!
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.name, user!.name))
+    const [updatedUser]: IUser[] = await TEST_DB!.select().from(users).where(eq(users.name, user!.name))
     expect(updatedUser!.points).toBe(0)
   })
 
   test("updatePoints", async (): Promise<void> => {
-    const [user]: schema.IUser[] = await TEST_DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    const [user]: IUser[] = await TEST_DB!.select().from(users).orderBy(desc(users.id)).limit(1)
     const points: IPoints = await updatePoints(user!.name, "test")
 
-    const [updatedUser]: schema.IUser[] = await TEST_DB!
-      .select()
-      .from(schema.users)
-      .orderBy(desc(schema.users.id))
-      .limit(1)
+    const [updatedUser]: IUser[] = await TEST_DB!.select().from(users).orderBy(desc(users.id)).limit(1)
     expect(updatedUser!.points).toBe(user!.points + points.points + Number(Bun.env.QUEST_POINTS))
   })
 
@@ -110,7 +105,7 @@ describe("db", (): void => {
 
   test("resetPoints - all", async (): Promise<void> => {
     await resetPoints()
-    const [user]: schema.IUser[] = await TEST_DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    const [user]: IUser[] = await TEST_DB!.select().from(users).orderBy(desc(users.id)).limit(1)
     expect(user!.points).toBe(0)
     expect()
   })
