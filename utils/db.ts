@@ -27,6 +27,7 @@ interface IPoints extends IJustPoints {
 
 let SQLITE: Database | null = null
 let DB: SQLiteBunDatabase | null = null
+let TEST_DB: SQLiteBunDatabase | null = null
 
 const DEFAULT_MODIFIER: number = 3
 const POINTS_MODIFIER: number = isNaN(Number(Bun.env.POINTS_MODIFIER))
@@ -41,17 +42,7 @@ const QUEST_POINTS: number = isNaN(Number(Bun.env.QUEST_POINTS)) ? QUEST_POINTS_
 Bun.env.DB_NAME = Bun.env.DB_NAME || "wordjumblebot.db"
 Bun.env.DB_PATH = Bun.env.DB_PATH || "./db/"
 
-Bun.env.SQL_DEBUG = false
-
 const openDatabase = async (): Promise<void> => {
-  if (!Bun.env.DB_PATH) {
-    throw new Error("Invalid DB_PATH")
-  }
-
-  if (!Bun.env.DB_NAME) {
-    throw new Error("Invalid DB_NAME")
-  }
-
   await mkdir(Bun.env.DB_PATH, {
     recursive: true
   })
@@ -67,6 +58,10 @@ const openDatabase = async (): Promise<void> => {
     client: SQLITE,
     jit: true
   })
+
+  if (Bun.env.NODE_ENV === "test") {
+    TEST_DB = DB
+  }
 
   DB.run(
     sql.raw(`
@@ -285,7 +280,6 @@ const closeDatabase = async (): Promise<void> => {
 
 export {
   closeDatabase,
-  DB,
   getAll,
   getWordPoints,
   type IPoints,
@@ -293,5 +287,6 @@ export {
   QUEST_MAX,
   QUEST_POINTS,
   resetPoints,
+  TEST_DB,
   updatePoints
-} // ! NOTE: exporting DB for testing
+}

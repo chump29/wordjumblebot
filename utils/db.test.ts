@@ -12,12 +12,12 @@ import { type FunctionsVersioning, seed } from "drizzle-seed"
 import * as schema from "../db/schema.ts"
 import {
   closeDatabase,
-  DB,
   getAll,
   getWordPoints,
   type IPoints,
   openDatabase,
   resetPoints,
+  TEST_DB,
   updatePoints
 } from "./db.ts"
 
@@ -34,7 +34,7 @@ beforeAll(async (): Promise<void> => {
   await deleteFiles()
     .then(async (): Promise<void> => await openDatabase())
     .then(async (): Promise<void> => {
-      await seed(DB as SQLiteBunDatabase, schema).refine((f: FunctionsVersioning) => ({
+      await seed(TEST_DB as SQLiteBunDatabase, schema).refine((f: FunctionsVersioning) => ({
         quests: {
           columns: {
             points: f.int({
@@ -67,20 +67,6 @@ afterAll(async (): Promise<void> => {
 })
 
 describe("db", (): void => {
-  test("openDatabase - no DB_PATH", async (): Promise<void> => {
-    const bak: string = Bun.env.DB_PATH
-    Bun.env.DB_PATH = ""
-    expect(async (): Promise<void> => await openDatabase()).toThrowError("Invalid DB_PATH")
-    Bun.env.DB_PATH = bak
-  })
-
-  test("openDatabase - no DB_NAME", async (): Promise<void> => {
-    const bak: string = Bun.env.DB_NAME
-    Bun.env.DB_NAME = ""
-    expect(async (): Promise<void> => await openDatabase()).toThrowError("Invalid DB_NAME")
-    Bun.env.DB_NAME = bak
-  })
-
   test("getAll", async (): Promise<void> => {
     const users: schema.IUser[] = await getAll()
     expect(users.length).toBe(10)
@@ -92,18 +78,25 @@ describe("db", (): void => {
   })
 
   test("resetPoints - user", async (): Promise<void> => {
-    const [user]: schema.IUser[] = await DB!.select().from(schema.users).limit(1)
+    const [user]: schema.IUser[] = await TEST_DB!.select().from(schema.users).limit(1)
     await resetPoints(user!.name)
 
-    const [updatedUser]: schema.IUser[] = await DB!.select().from(schema.users).where(eq(schema.users.name, user!.name))
+    const [updatedUser]: schema.IUser[] = await TEST_DB!
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.name, user!.name))
     expect(updatedUser!.points).toBe(0)
   })
 
   test("updatePoints", async (): Promise<void> => {
-    const [user]: schema.IUser[] = await DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    const [user]: schema.IUser[] = await TEST_DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
     const points: IPoints = await updatePoints(user!.name, "test")
 
-    const [updatedUser]: schema.IUser[] = await DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    const [updatedUser]: schema.IUser[] = await TEST_DB!
+      .select()
+      .from(schema.users)
+      .orderBy(desc(schema.users.id))
+      .limit(1)
     expect(updatedUser!.points).toBe(user!.points + points.points + Number(Bun.env.QUEST_POINTS))
   })
 
@@ -117,7 +110,7 @@ describe("db", (): void => {
 
   test("resetPoints - all", async (): Promise<void> => {
     await resetPoints()
-    const [user]: schema.IUser[] = await DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
+    const [user]: schema.IUser[] = await TEST_DB!.select().from(schema.users).orderBy(desc(schema.users.id)).limit(1)
     expect(user!.points).toBe(0)
     expect()
   })
