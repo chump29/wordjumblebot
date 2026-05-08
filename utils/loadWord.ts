@@ -27,7 +27,9 @@ let COUNT: number = 0
 
 let WORD: string | null = null
 
-let MIN: number = 5
+const MIN_DEFAULT: number = 5
+const MAX_DEFAULT: number = 0
+let MIN: number = 0
 let MAX: number = 0
 
 let RUNNING: boolean = false
@@ -57,9 +59,9 @@ const loadSettings = async (client: Client): Promise<void> => {
   CLIENT = client
   CHANNEL = await getChannel()
 
-  MIN = isNaN(Number(Bun.env.MIN_LENGTH)) ? 0 : Number(Bun.env.MIN_LENGTH)
+  MIN = isNaN(Number(Bun.env.MIN_LENGTH)) ? MIN_DEFAULT : Number(Bun.env.MIN_LENGTH)
   MIN = MIN === 0 ? Math.min(...words.map((word: string): number => word.length)) : MIN
-  MAX = isNaN(Number(Bun.env.MAX_LENGTH)) ? 0 : Number(Bun.env.MAX_LENGTH)
+  MAX = isNaN(Number(Bun.env.MAX_LENGTH)) ? MAX_DEFAULT : Number(Bun.env.MAX_LENGTH)
   MAX = MAX === 0 ? Math.max(...words.map((word: string): number => word.length)) : MAX
 
   if (MAX < MIN) {
