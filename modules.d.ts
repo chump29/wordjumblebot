@@ -5,6 +5,7 @@ declare module "bun" {
     DB_NAME: string
     DB_PATH: string
     DEBUG: boolean
+    DEBUG_SQL: string
     IS_DEBUG: string
     LOGO_URL: string
     MAX_LENGTH: string

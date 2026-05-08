@@ -26,8 +26,9 @@ interface IPoints extends IJustPoints {
 }
 
 let SQLITE: Database | null = null
+let TEST_SQLITE: Database | null = null
 let DB: SQLiteBunDatabase | null = null
-let TEST_DB: SQLiteBunDatabase | null = null
+const TEST_DB: SQLiteBunDatabase | null = null
 
 const DEFAULT_MODIFIER: number = 3
 const POINTS_MODIFIER: number = isNaN(Number(Bun.env.POINTS_MODIFIER))
@@ -54,14 +55,16 @@ const openDatabase = async (): Promise<void> => {
     strict: true
   })
 
-  DB = drizzle({
-    client: SQLITE,
-    jit: true
-  })
-
   if (Bun.env.NODE_ENV === "test") {
-    TEST_DB = DB
+    TEST_SQLITE = SQLITE
   }
+
+  DB =
+    TEST_DB ??
+    drizzle({
+      client: SQLITE,
+      jit: true
+    })
 
   DB.run(
     sql.raw(`
@@ -276,6 +279,10 @@ const resetPoints = async (name: string | null = null): Promise<void> => {
 
 const closeDatabase = async (): Promise<void> => {
   SQLITE?.close()
+
+  if (Bun.env.DEBUG) {
+    info("Database closed")
+  }
 }
 
 export {
@@ -288,5 +295,6 @@ export {
   QUEST_POINTS,
   resetPoints,
   TEST_DB,
+  TEST_SQLITE,
   updatePoints
 }

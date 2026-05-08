@@ -1,11 +1,13 @@
 import { glob, unlink } from "node:fs/promises"
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test"
+import { type Database } from "bun:sqlite"
+import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test"
 
 import { info } from "@postfmly/logger"
 
 import { desc, eq } from "drizzle-orm"
-import { type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
+import { drizzle, type SQLiteBunDatabase } from "drizzle-orm/bun-sqlite"
+import { EnhancedQueryLogger } from "drizzle-query-logger"
 import { type FunctionsVersioning, seed } from "drizzle-seed"
 
 import { type IUser, quests, users } from "../db/schema.ts"
@@ -17,8 +19,19 @@ import {
   openDatabase,
   resetPoints,
   TEST_DB,
+  TEST_SQLITE,
   updatePoints
 } from "./db.ts"
+
+mock.module("./db.ts", (): unknown => {
+  return {
+    TEST_DB: drizzle({
+      client: TEST_SQLITE as Database,
+      jit: true,
+      logger: Bun.env.DEBUG_SQL === "true" ? new EnhancedQueryLogger() : undefined
+    })
+  }
+})
 
 const TEST_POINTS: number = 106 // * T=84 + E=69 + S=83 + T=84 / 3 ≈ 106
 
@@ -63,7 +76,6 @@ beforeAll(async (): Promise<void> => {
 
 afterAll(async (): Promise<void> => {
   await deleteFiles().then(async (): Promise<void> => {
-    info("Closing database")
     await closeDatabase()
   })
 })
