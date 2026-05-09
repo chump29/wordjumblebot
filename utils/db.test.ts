@@ -108,11 +108,11 @@ describe("db", (): void => {
   })
 
   test("updatePoints - no name", async (): Promise<void> => {
-    expect(async (): Promise<IPoints> => await updatePoints("", "test")).toThrowError("Invalid name")
+    expect(updatePoints("", "test")).rejects.toThrowError("Invalid name")
   })
 
   test("updatePoints - no word", async (): Promise<void> => {
-    expect(async (): Promise<IPoints> => await updatePoints("test", "")).toThrowError("Invalid word")
+    expect(updatePoints("test", "")).rejects.toThrowError("Invalid word")
   })
 
   test("resetPoints - all", async (): Promise<void> => {

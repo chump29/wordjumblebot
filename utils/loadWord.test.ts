@@ -61,7 +61,7 @@ describe("loadWords", (): void => {
 
   test("loadSettings - no client", async (): Promise<void> => {
     // biome-ignore lint/suspicious/noExplicitAny: for testing
-    expect(async (): Promise<void> => await loadSettings(null as any)).toThrowError("Invalid client")
+    expect(loadSettings(null as any)).rejects.toThrowError("Invalid client")
   })
 
   test("loadSettings - no words", async (): Promise<void> => {
@@ -71,7 +71,7 @@ describe("loadWords", (): void => {
       }
     })
 
-    expect(async (): Promise<void> => await loadSettings(client)).toThrowError("No words")
+    expect(loadSettings(client)).rejects.toThrowError("No words")
   })
 
   test("newWord", async (): Promise<void> => {
