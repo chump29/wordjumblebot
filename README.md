@@ -4,7 +4,7 @@
 
 ---
 
-![Biome](https://img.shields.io/badge/Biome-ul-informational?style=plastic&logo=biome) &nbsp;
+![Biome](https://img.shields.io/badge/Biome-^2.4.14-informational?style=plastic&logo=biome) &nbsp;
 ![Bun](https://img.shields.io/badge/Bun-~1.3.13-informational?style=plastic&logo=bun) &nbsp;
 ![discord.js](https://img.shields.io/badge/discord.js-^14.26.4-informational?style=plastic&logo=discord.js) &nbsp;
 ![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.2-informational?style=plastic&logo=drizzle)

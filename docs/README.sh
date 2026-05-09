@@ -6,9 +6,15 @@ strip() {
 
 clear
 
+if [ ! -d ../node_modules ]; then
+  echo -e "🛠️ Installing packages\n"
+  bun install
+  echo
+fi
+
 echo -e "📌 Variables:\n"
 
-_biome=$(jq '.devDependencies."@biomejs/biome"' ../package.json)
+_biome=$(jq '.peerDependencies."@biomejs/biome"' ../node_modules/@postfmly/config/package.json)
 _biome=$(strip "$_biome")
 export _biome
 echo -e " • _biome: $_biome"
