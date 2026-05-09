@@ -24,7 +24,6 @@
   "scripts": {
     "clean": "rimraf node_modules bun.lock coverage",
     "clean:coverage": "rimraf coverage",
-    "clean:coverage:tmp": "rimraf coverage/.*.tmp",
     "clean:db": "rimraf db/wordjumblebot.db*",
     "dev": "bun --watch run index.ts",
     "preinstall": "bunx only-allow bun",
@@ -35,7 +34,7 @@
     "lint:env": "dotenv-linter check .",
     "prepare": "husky",
     "prod": "bun run index.ts",
-    "test": "bun test --coverage --isolate --coverage-reporter=lcov --coverage-reporter=text && bun run clean:coverage:tmp"
+    "test": "bun run clean:coverage && bun test --coverage --isolate --coverage-reporter=lcov --coverage-reporter=text"
   },
   "lint-staged": {
     ".env*": "dotenv-linter check",
