@@ -54,10 +54,6 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
     return
   }
 
-  if (!Bun.env.NAME) {
-    throw new Error("Invalid NAME")
-  }
-
   const users: IUser[] = await getAll().then((users: IUser[]): IUser[] =>
     users.filter((user: IUser): boolean => user.points > 0)
   )

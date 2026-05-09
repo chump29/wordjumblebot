@@ -20,10 +20,6 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
 }
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  if (!Bun.env.NAME) {
-    throw new Error("Invalid NAME")
-  }
-
   if (!RUNNING) {
     await interaction.reply({
       content: `-# > ❌ ${Bun.env.NAME} is not started`,

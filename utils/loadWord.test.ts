@@ -18,9 +18,6 @@ import { COUNT, checkWord, loadSettings, newWord, RUNNING, startWord, stopWord, 
 
 const ID_LEN: number = 19
 
-const MIN_POINTS: number = 100
-const MAX_POINTS: number = 200
-
 describe("loadWords", (): void => {
   mock.module("./loadWords.ts", () => {
     return {
@@ -85,6 +82,9 @@ describe("loadWords", (): void => {
   })
 
   test("checkWord", async (): Promise<void> => {
+    const MIN_POINTS: number = 100
+    const MAX_POINTS: number = 200
+
     message.content = WORD as string
 
     mock.module("./db.ts", (): unknown => {
