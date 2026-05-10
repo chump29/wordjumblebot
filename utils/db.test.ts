@@ -119,6 +119,5 @@ describe("db", (): void => {
     await resetPoints()
     const [user]: IUser[] = await TEST_DB!.select().from(users).orderBy(desc(users.id)).limit(1)
     expect(user!.points).toBe(0)
-    expect()
   })
 })
