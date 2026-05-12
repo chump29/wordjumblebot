@@ -58,10 +58,17 @@ describe("client", (): void => {
     const clientObj: Client = await client()
     expect(clientObj).not.toBeUndefined()
 
-    expect(onSpy).toHaveBeenNthCalledWith(1, "SIGINT", expect.any(Function))
-    expect(onSpy).toHaveBeenNthCalledWith(2, "SIGTERM", expect.any(Function))
+    mock.module("./client.ts", (): unknown => {
+      return {
+        shutdown: jest.fn()
+      }
+    })
+
     process.emit("SIGINT")
+    expect(onSpy).toHaveBeenNthCalledWith(1, "SIGINT", expect.any(Function))
+
     process.emit("SIGTERM")
+    expect(onSpy).toHaveBeenNthCalledWith(2, "SIGTERM", expect.any(Function))
 
     mock.module("./loadWord.ts", (): unknown => {
       return {

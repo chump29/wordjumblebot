@@ -18,6 +18,9 @@ const EVENTS: string[] = [
 
 const shutdown = async (event: string): Promise<void> => {
   if (isShutdown) {
+    if (Bun.env.DEBUG) {
+      info("Already shut down")
+    }
     return
   }
 
