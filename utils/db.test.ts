@@ -33,8 +33,6 @@ mock.module("./db.ts", (): unknown => {
   }
 })
 
-const TEST_POINTS: number = 106 // * T=84 + E=69 + S=83 + T=84 / 3 ≈ 106
-
 const deleteFiles = async (): Promise<void> => {
   for await (const file of glob(`${Bun.env.DB_PATH}/${Bun.env.DB_NAME}*`)) {
     info(`Deleting ${file}`)
@@ -88,6 +86,7 @@ describe("db", (): void => {
   })
 
   test("getWordPoints", async (): Promise<void> => {
+    const TEST_POINTS: number = 106 // * T=84 + E=69 + S=83 + T=84 / 3 ≈ 106
     expect(await getWordPoints("test")).toBe(TEST_POINTS)
   })
 

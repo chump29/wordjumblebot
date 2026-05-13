@@ -18,10 +18,6 @@ import { mocked } from "jest-mock"
 import { client, login, shutdown } from "./client.ts"
 import { checkWord, startWord } from "./loadWord.ts"
 
-const ID_LEN: number = 26
-const TS_LEN: number = 6
-const HMAC_LEN: number = 38
-
 describe("client", (): void => {
   spyOn(process, "exit").mockImplementation((code: number): never => {
     throw new Error(code.toString())
@@ -109,6 +105,10 @@ describe("client", (): void => {
         } as unknown as Client
       }
     })
+
+    const ID_LEN: number = 26
+    const TS_LEN: number = 6
+    const HMAC_LEN: number = 38
 
     Bun.env.TOKEN = fake(`${"*".repeat(ID_LEN)}.${"*".repeat(TS_LEN)}.${"*".repeat(HMAC_LEN)}`)
 
