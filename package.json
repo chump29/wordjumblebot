@@ -30,7 +30,7 @@
     "postinstall": "config-init",
     "lint": "bun run lint:biome && bun run lint:env",
     "lint:biome": "biome check --write --verbose",
-    "lint:ci": "biome ci --verbose --reporter=default --reporter=github",
+    "lint:ci": "biome ci --verbose --reporter=default --reporter=github && bun run lint:env",
     "lint:env": "dotenv-linter check .",
     "prepare": "husky",
     "prod": "bun run index.ts",
