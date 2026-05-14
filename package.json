@@ -41,6 +41,7 @@
     "*.{json,ts}": "biome ci --no-errors-on-unmatched"
   },
   "overrides": {
+    "@biomejs/biome": "^2.4.15",
     "drizzle-orm": "1.0.0-rc.2",
     "typescript": "^6.0.3"
   },

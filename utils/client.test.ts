@@ -83,7 +83,7 @@ describe("client", (): void => {
     ]
     expect(allIntents.every((intent: GatewayIntentBits): boolean => intents.has(intent))).toBeTrue()
 
-    const activities: ActivitiesOptions | undefined = clientObj.options.presence?.activities?.at(0)
+    const activities: ActivitiesOptions | undefined = clientObj.options.presence!.activities![0]
     expect(activities).not.toBeUndefined()
     expect(activities!.name === "Jumbling...").toBeTrue()
     expect(activities!.type === ActivityType.Custom).toBeTrue()
