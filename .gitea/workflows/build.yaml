@@ -31,6 +31,9 @@ jobs:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: bun install --frozen-lockfile
 
+      - name: Install dotenv-linter
+        uses: dotenv-linter/action-dotenv-linter@v3
+
       - name: Linting
         run: bun run lint:ci
 
