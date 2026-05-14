@@ -33,6 +33,8 @@ jobs:
 
       - name: Install dotenv-linter
         uses: dotenv-linter/action-dotenv-linter@v3
+        with:
+          reporter: github-code-suggestions
 
       - name: Linting
         run: bun run lint:ci
