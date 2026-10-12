@@ -7,7 +7,7 @@
 ![Bun](https://img.shields.io/badge/Bun-1.4.3-informational?style=plastic&logo=bun) &nbsp;
 ![discord.js](https://img.shields.io/badge/discord.js-^14.27.0-informational?style=plastic&logo=discord.js) &nbsp;
 ![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.4-informational?style=plastic&logo=drizzle)
-![SQLite](https://img.shields.io/badge/SQLite-3.49.2-informational?style=plastic&logo=sqlite)
+![SQLite](https://img.shields.io/badge/SQLite-3.53.4-informational?style=plastic&logo=sqlite)
 
 ![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg) &nbsp;
 ![Coverage](https://img.shields.io/badge/Coverage-78.65%25-success?style=plastic&logo=jest)
@@ -45,9 +45,9 @@
 
 |      📋 Task      |      🔧 Command       | ⚙️ Permission |
 |:-----------------:|:---------------------:|:-------------:|
-|       Info        |        `/info`        | SendMessages  |
-| Show Leaderboard  |    `/leaderboard`     | SendMessages  |
-|       Ping        |        `/ping`        | SendMessages  |
+|       Info        |        `/info`        |     None      |
+| Show Leaderboard  |    `/leaderboard`     |     None      |
+|       Ping        |        `/ping`        |     None      |
 | Reset User Score  | `/reset <@user\|all>` | Administrator |
 |    Word Status    |       `/status`       | Administrator |
 | Generate New Word |        `/word`        | Administrator |

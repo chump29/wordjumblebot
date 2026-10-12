@@ -45,9 +45,9 @@
 
 |      📋 Task      |      🔧 Command       | ⚙️ Permission |
 |:-----------------:|:---------------------:|:-------------:|
-|       Info        |        `/info`        | SendMessages  |
-| Show Leaderboard  |    `/leaderboard`     | SendMessages  |
-|       Ping        |        `/ping`        | SendMessages  |
+|       Info        |        `/info`        |     None      |
+| Show Leaderboard  |    `/leaderboard`     |     None      |
+|       Ping        |        `/ping`        |     None      |
 | Reset User Score  | `/reset <@user\|all>` | Administrator |
 |    Word Status    |       `/status`       | Administrator |
 | Generate New Word |        `/word`        | Administrator |
