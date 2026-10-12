@@ -3,9 +3,7 @@
   "compilerOptions": {
     "types": [
       "bun",
-      "ms",
-      "node",
-      "pluralize"
+      "node"
     ]
   }
 }

@@ -1,11 +1,14 @@
 *
 
+!.husky/prepare.min.mjs
 !bun.lock
-!db/schema.ts
+!db/
 !events/
-!patches/
-!utils/
 !healthcheck.sh
 !index.ts
 !package.json
+!patches/
 !tsconfig.json
+!utils/
+
+db/wordjumblebot*

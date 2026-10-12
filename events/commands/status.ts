@@ -1,33 +1,31 @@
 import { parse } from "node:path"
 
+import pluralize from "@jarrodek/pluralize"
 import {
   type ChatInputCommandInteraction,
+  InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder
 } from "discord.js"
 
-import { getWordPoints } from "../../utils/db.ts"
-import { WORD } from "../../utils/loadWord.ts"
+import { DB } from "../../utils/db.ts"
+import { WordJumble } from "../../utils/wordJumble.ts"
 
-const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
-  return new SlashCommandBuilder()
+const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody =>
+  new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
-    .setDescription("Show word")
+    .setDescription("Show status")
+    .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .toJSON()
-}
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  let content: string = `-# > ❌ ${Bun.env.NAME} is not running`
-  if (WORD) {
-    content = `-# > 💬 Listening for \`${WORD}\` worth \`${await getWordPoints(WORD)}\` points`
-  }
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-  await interaction.reply({
-    content: content,
-    flags: MessageFlags.Ephemeral
+  await interaction.editReply({
+    content: `-# > 💬 Listening for \`${WordJumble.WORD}\` as \`${WordJumble.JUMBLED_WORD}\` worth \`${pluralize("point", DB.getWordPoints(WordJumble.WORD as string), true)}\``
   })
 }
 

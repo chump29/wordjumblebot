@@ -4,66 +4,47 @@ import {
   type APIEmbedField,
   type ChatInputCommandInteraction,
   EmbedBuilder,
+  type HexColorString,
   InteractionContextType,
   MessageFlags,
-  PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder
 } from "discord.js"
 
-import { checkRate } from "@postfmly/checkrate"
+import { author, version } from "../../package.json" with { type: "json" }
+import { bucket } from "../../utils/bucket.ts"
+import { env } from "../../utils/env.ts"
+import { WordJumble } from "../../utils/wordJumble.ts"
 
-import { COUNT, MAX, MIN } from "../../utils/loadWord.ts"
-
-const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
-  return new SlashCommandBuilder()
+const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody =>
+  new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
-    .setDescription(`Information about ${Bun.env.NAME}`)
-    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
+    .setDescription(`Information about ${env.NAME}`)
     .setContexts(InteractionContextType.Guild)
     .toJSON()
-}
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  if (await checkRate(interaction)) {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+
+  if (!bucket.allow(interaction.user.username)) {
+    await interaction.editReply({ content: "-# > ❌ Rate limit exceeded" })
+
     return
   }
 
-  if (!Bun.env.LOGO_URL) {
-    throw new Error("Invalid LOGO_URL")
-  }
-
-  await interaction.reply({
-    flags: MessageFlags.Ephemeral,
+  await interaction.editReply({
     embeds: [
       new EmbedBuilder()
-        .setColor("#78866b")
-        .setAuthor({
-          iconURL: Bun.env.LOGO_URL,
-          name: `${Bun.env.NAME} v${Bun.env.npm_package_version}`
-        })
-        .setThumbnail(Bun.env.LOGO_URL)
-        .setDescription("- Word jumble game")
-        .setFields(
-          {
-            inline: true,
-            name: "Total Words",
-            value: COUNT.toLocaleString()
-          } as APIEmbedField,
-          {
-            inline: true,
-            name: "Min Length",
-            value: MIN.toString()
-          } as APIEmbedField,
-          {
-            inline: true,
-            name: "Max Length",
-            value: MAX.toString()
-          } as APIEmbedField
-        )
-        .setFooter({
-          text: "By Chris Post"
-        })
+        .setColor(env.COLOR as HexColorString)
+        .setAuthor({ iconURL: env.LOGO_URL, name: `${env.NAME} v${version}` })
+        .setThumbnail(env.LOGO_URL)
+        .setDescription("- Jumbles words")
+        .setFields({
+          inline: true,
+          name: "Total Words",
+          value: WordJumble.COUNT.toLocaleString()
+        } as APIEmbedField)
+        .setFooter({ text: `By ${author.name}` })
     ]
   })
 }

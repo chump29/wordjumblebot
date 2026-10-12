@@ -1,12 +1,18 @@
-import { type ChatInputCommandInteraction } from "discord.js"
+import { join } from "node:path"
 
-import { type ICommandFile } from "./loadCommands.ts"
+import { type ChatInputCommandInteraction, type Interaction } from "discord.js"
 
-const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  if (interaction.isChatInputCommand()) {
-    const commandFile: ICommandFile = await import(`${import.meta.dirname}/commands/${interaction.commandName}`)
-    await commandFile.invoke(interaction)
+interface ICommandFile {
+  invoke: (interaction: ChatInputCommandInteraction) => Promise<void>
+}
+
+const invoke = async (interaction: Interaction): Promise<void> => {
+  if (!interaction.isChatInputCommand()) {
+    return
   }
+
+  const commandFile: ICommandFile = await import(join(import.meta.dir, "commands", interaction.commandName))
+  await commandFile.invoke(interaction)
 }
 
 export { invoke }

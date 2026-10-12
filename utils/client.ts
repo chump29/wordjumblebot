@@ -1,96 +1,110 @@
-import { ActivityType, Client, Events, GatewayIntentBits, type Message } from "discord.js"
+import { default as process } from "node:process"
 
-import { info } from "@postfmly/logger"
-import { stopLogoServer } from "@postfmly/logoserver"
+import { error, info } from "@postfmly/logger"
+import { type ILogoServerConfig, LogoServer } from "@postfmly/logoserver"
 
-import { closeDatabase } from "./db.ts"
-import { checkWord, RUNNING, stopWord } from "./loadWord.ts"
+import { ActivityType, Client as DiscordClient, Events, GatewayIntentBits, type Message } from "discord.js"
 
-let CLIENT: Client | null = null
-const TEST_CLIENT: Client | null = null
+import { loadCommands } from "../events/loadCommands.ts"
+import { DB } from "./db.ts"
+import { env } from "./env.ts"
+import { WordJumble } from "./wordJumble.ts"
 
-let isShutdown: boolean = false
-
-const EVENTS: string[] = [
-  "SIGINT",
-  "SIGTERM"
-]
-
-const shutdown = async (event: string): Promise<void> => {
-  if (isShutdown) {
-    if (Bun.env.DEBUG) {
-      info("Already shut down")
-    }
-    return
-  }
-
-  if (Bun.env.DEBUG) {
-    info(`${event} detected`)
-  }
-
-  info("Shutting down...")
-
-  isShutdown = true
-
-  await closeDatabase()
-    .then(async (): Promise<void> => {
-      if (RUNNING) {
-        await stopWord()
-      }
-    })
-    .then(async (): Promise<void> => await Promise.resolve(CLIENT?.destroy()))
-    .then(async (): Promise<void> => await stopLogoServer())
-    .then((): void => process.exit(0))
+interface IWordJumbleClient {
+  init: (testClient?: DiscordClient) => Promise<DiscordClient>
+  shutdown: (event?: string) => Promise<void>
 }
 
-const client = async (): Promise<Client> => {
-  CLIENT = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.MessageContent
-    ],
-    presence: {
-      activities: [
-        {
-          name: "Jumbling...",
-          type: ActivityType.Custom
+class WordJumbleClient implements IWordJumbleClient {
+  private CLIENT!: DiscordClient
+
+  private LOGO_SERVER!: LogoServer
+
+  private isShutdown: boolean = true
+
+  async shutdown(event?: string): Promise<void> {
+    if (this.isShutdown) {
+      return
+    }
+
+    if (event && env.DEBUG) {
+      info(`❌ ${event} detected`)
+    }
+
+    info("🔴 Shutting down...")
+
+    await this.CLIENT.destroy()
+
+    await this.LOGO_SERVER.stop()
+
+    DB.close()
+
+    this.isShutdown = true
+
+    process.exit(0)
+  }
+
+  private async login(): Promise<void> {
+    await this.CLIENT.login(env.TOKEN)
+
+    if (this.CLIENT.user && env.DEBUG) {
+      info(`⚡ Connected as ${this.CLIENT.user.displayName} (${this.CLIENT.user.tag})`)
+    }
+  }
+
+  async init(testClient?: DiscordClient): Promise<DiscordClient> {
+    this.LOGO_SERVER = new LogoServer({
+      DEBUG: env.DEBUG,
+      LOGO_NAME: env.LOGO_NAME,
+      LOGO_PATH: env.LOGO_PATH,
+      LOGO_PORT: env.LOGO_PORT
+    } as ILogoServerConfig)
+
+    await this.LOGO_SERVER.start()
+
+    this.CLIENT =
+      testClient ??
+      new DiscordClient({
+        intents: [
+          GatewayIntentBits.Guilds,
+          GatewayIntentBits.GuildMembers,
+          GatewayIntentBits.GuildMessages,
+          GatewayIntentBits.MessageContent
+        ],
+        presence: {
+          activities: [
+            {
+              name: `${env.ACTIVITY}...`,
+              type: ActivityType.Custom
+            }
+          ]
         }
-      ]
+      })
+
+    for (const event of ["SIGINT", "SIGTERM"]) {
+      process.on(event, (e: string): void => {
+        this.shutdown(e).catch((err: unknown) => {
+          error("❌ Error during shutdown", err)
+
+          process.exit(1)
+        })
+      })
     }
-  })
 
-  CLIENT.on(Events.MessageCreate, async (message: Message): Promise<void> => {
-    await checkWord(message)
-  })
-
-  EVENTS.forEach((event: string): void => {
-    process.on(event, async (event: string): Promise<void> => {
-      await shutdown(event)
+    this.CLIENT.on(Events.MessageCreate, async (message: Message): Promise<void> => {
+      await WordJumble.checkForWord(message)
     })
-  })
 
-  return CLIENT
+    await loadCommands(this.CLIENT)
+
+    await this.login()
+
+    this.isShutdown = false
+
+    return this.CLIENT
+  }
 }
 
-const login = async (): Promise<Client> => {
-  CLIENT = TEST_CLIENT ?? CLIENT
+const Client: IWordJumbleClient = new WordJumbleClient()
 
-  if (!CLIENT) {
-    throw new Error("Invalid CLIENT")
-  }
-
-  if (!Bun.env.TOKEN) {
-    throw new Error("Invalid TOKEN")
-  }
-
-  await CLIENT.login(Bun.env.TOKEN)
-
-  if (CLIENT.user && Bun.env.DEBUG) {
-    info(`Connected as ${CLIENT.user.displayName} (${CLIENT.user.tag})`)
-  }
-
-  return CLIENT
-}
-
-export { client, login, shutdown, TEST_CLIENT }
+export { Client }

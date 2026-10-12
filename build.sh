@@ -15,13 +15,13 @@ clear
 echo -e "${_title} ${_red}WordJumbleBot${_nc} ${_title}\n"
 
 echo -e "${_task} ${_yellow}Installing dependencies${_nc}:\n"
-bun install --frozen-lockfile
+bun ci
 
 echo -e "\n${_lint} ${_yellow}Linting${_nc}:\n"
 bun run lint
 
 echo -e "\n${_test} ${_yellow}Testing${_nc}:\n"
-bun run test
+bun run test:coverage
 
 ./docker.sh
 

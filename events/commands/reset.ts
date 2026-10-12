@@ -1,48 +1,73 @@
 import { parse } from "node:path"
 
+import { error } from "@postfmly/logger"
+import { type Optional } from "@postfmly/types"
+
 import {
   type ChatInputCommandInteraction,
+  type GuildMember,
+  InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
-  type SlashCommandUserOption,
-  type User
+  type SlashCommandStringOption
 } from "discord.js"
+import { createRegExp, exactly, oneOrMore, wordChar } from "magic-regexp"
 
-import { info } from "@postfmly/logger"
+import { DB } from "../../utils/db.ts"
 
-import { resetPoints } from "../../utils/db.ts"
-
-const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
-  return new SlashCommandBuilder()
+const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody =>
+  new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
     .setDescription("Reset points")
-    .addUserOption(
-      (option: SlashCommandUserOption): SlashCommandUserOption => option.setName("user").setDescription("User to reset")
+    .addStringOption(
+      (option: SlashCommandStringOption): SlashCommandStringOption =>
+        option.setName("option").setDescription("@user or ALL").setRequired(true)
     )
+    .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .toJSON()
-}
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  let content: string = "Reset all points"
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-  const user: User | null = interaction.options.getUser("user")
-  if (user) {
-    await resetPoints(user.displayName)
-    content += ` for \`${user.displayName}\``
+  const option: string = (interaction.options.getString("option") as string).trim()
+
+  if (option.toLowerCase() === "all") {
+    await DB.resetPoints()
+
+    await interaction.editReply({ content: "-# > ↩️ Reset points for `ALL`" })
   } else {
-    await resetPoints()
-  }
+    const userId: Optional<string> = option.match(
+      createRegExp(exactly("<@").at.lineStart(), oneOrMore(wordChar).groupedAs("userId"), exactly(">").at.lineEnd())
+    )?.groups.userId
+    if (!userId) {
+      const msg: string = `❌ Could not find user: ${option}`
 
-  await interaction.reply({
-    content: `-# > ↩️ ${content}`,
-    flags: MessageFlags.Ephemeral
-  })
+      await interaction.editReply({ content: `-# > ${msg}` })
 
-  if (Bun.env.DEBUG) {
-    info(content)
+      error(msg)
+
+      return
+    }
+
+    const member: Optional<GuildMember> = await interaction.guild?.members.fetch(userId)
+    if (!member) {
+      const msg: string = `❌ Could not find member: ${userId}`
+
+      await interaction.editReply({ content: `-# > ${msg}` })
+
+      error(msg)
+
+      return
+    }
+
+    const name: string = member.user.displayName
+
+    await DB.resetPoints(name)
+
+    await interaction.editReply({ content: `-# > ↩️ Reset points for \`${name}\`` })
   }
 }
 

@@ -1,34 +1,31 @@
-import {
-  type ChatInputCommandInteraction,
-  type Client,
-  Events,
-  type Interaction,
-  type RESTPostAPIChatInputApplicationCommandsJSONBody
-} from "discord.js"
+import { join } from "node:path"
+
+import { error } from "@postfmly/logger"
+
+import { type Client, Events, type Interaction } from "discord.js"
 
 interface IClientReady {
-  invoke(client: Client): Promise<void>
+  invoke: (client: Client) => Promise<void>
 }
 
 interface IInteractionCreate {
-  invoke(interaction: ChatInputCommandInteraction): Promise<void>
-}
-
-interface ICommandFile {
-  create(): Promise<RESTPostAPIChatInputApplicationCommandsJSONBody>
-  invoke(interaction: ChatInputCommandInteraction): Promise<void>
+  invoke: (interaction: Interaction) => Promise<void>
 }
 
 const loadCommands = async (client: Client): Promise<void> => {
-  const interactionCreate: IInteractionCreate = await import(`${import.meta.dirname}/${Events.InteractionCreate}.ts`)
+  const interactionCreate: IInteractionCreate = await import(join(import.meta.dir, `${Events.InteractionCreate}.ts`))
   client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<void> => {
-    await interactionCreate.invoke(interaction as ChatInputCommandInteraction)
+    try {
+      await interactionCreate.invoke(interaction)
+    } catch (e: unknown) {
+      error(`❌ ${"commandName" in interaction ? interaction.commandName : "Unknown"}:`, e)
+    }
   })
 
-  const clientReady: IClientReady = await import(`${import.meta.dirname}/${Events.ClientReady}.ts`)
-  client.once(Events.ClientReady, async (client: Client): Promise<void> => {
-    await clientReady.invoke(client)
+  const clientReady: IClientReady = await import(join(import.meta.dir, `${Events.ClientReady}.ts`))
+  client.once(Events.ClientReady, async (c: Client): Promise<void> => {
+    await clientReady.invoke(c)
   })
 }
 
-export { type ICommandFile, loadCommands }
+export { loadCommands }

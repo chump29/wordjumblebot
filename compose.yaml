@@ -8,8 +8,6 @@ services:
     volumes:
       - db:/app/db
     environment:
-      - LOGO_NAME=wordjumblebot.webp
-      - LOGO_PATH=./utils/images
       - LOGO_PORT=8004
       - LOGO_URL=https://wordjumblebot.postfmly.us/wordjumblebot.webp
       - TZ=America/Chicago

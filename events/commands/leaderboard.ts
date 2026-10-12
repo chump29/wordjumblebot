@@ -4,67 +4,79 @@ import {
   type APIEmbedField,
   type ChatInputCommandInteraction,
   EmbedBuilder,
+  type HexColorString,
   InteractionContextType,
   MessageFlags,
-  PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder
 } from "discord.js"
 
-import { checkRate } from "@postfmly/checkrate"
+import { type IPoints } from "../../db/schema.ts"
+import { bucket } from "../../utils/bucket.ts"
+import { DB } from "../../utils/db.ts"
+import { env } from "../../utils/env.ts"
 
-import { type IUser } from "../../db/schema.ts"
-import { getAll } from "../../utils/db.ts"
-
-const create = async (): Promise<RESTPostAPIChatInputApplicationCommandsJSONBody> => {
-  return new SlashCommandBuilder()
+const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody =>
+  new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
     .setDescription("Show leaderboard")
-    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
     .setContexts(InteractionContextType.Guild)
     .toJSON()
+
+const ordinal = (n: number): string => {
+  const pr: Intl.PluralRules = new Intl.PluralRules("en-US", { type: "ordinal" })
+
+  const suffixes: Record<Intl.LDMLPluralRule, string> = {
+    few: "rd",
+    many: "th",
+    one: "st",
+    other: "th",
+    two: "nd",
+    zero: "th"
+  }
+
+  return `${n}${suffixes[pr.select(n)]}`
 }
 
-const getEmbed = async (users: IUser[]): Promise<APIEmbedField[]> => {
+const getEmbed = (points: IPoints[]): APIEmbedField[] => {
   const fields: APIEmbedField[] = [
     {
       name: "_ _",
       value: ""
     } as APIEmbedField
   ]
-  if (!users.length) {
+  if (points.length > 0) {
+    points.forEach((p: IPoints, i: number): void => {
+      fields.push({
+        inline: true,
+        name: `${i === 0 ? "👑 " : ""}${ordinal(i + 1)}: ${p.name}`,
+        value: `-# ${p.points}`
+      } as APIEmbedField)
+    })
+  } else {
     fields.push({
       name: "🚫  Nothing to show",
       value: ""
     } as APIEmbedField)
-  } else {
-    users.forEach((user: IUser, i: number): void => {
-      fields.push({
-        inline: true,
-        name: `${i === 0 ? "👑 " : ""}${user.name}`,
-        value: `-# ${user.points}`
-      } as APIEmbedField)
-    })
   }
   return fields
 }
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  if (await checkRate(interaction)) {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+
+  if (!bucket.allow(interaction.user.username)) {
+    await interaction.editReply({ content: "-# > ❌ Rate limit exceeded" })
+
     return
   }
 
-  const users: IUser[] = await getAll().then((users: IUser[]): IUser[] =>
-    users.filter((user: IUser): boolean => user.points > 0)
-  )
-
-  await interaction.reply({
-    flags: MessageFlags.Ephemeral,
+  await interaction.editReply({
     embeds: [
       new EmbedBuilder()
-        .setColor("#78866b")
-        .setTitle(`🏆  ${Bun.env.NAME} Leaderboard  🏆`)
-        .setFields(await getEmbed(users))
+        .setColor(env.COLOR as HexColorString)
+        .setTitle(`🏆  ${env.NAME} Top 10 Leaderboard  🏆`)
+        .setFields(getEmbed(await DB.getLeaderboard()))
         .toJSON()
     ]
   })

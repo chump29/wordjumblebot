@@ -2,39 +2,29 @@ import { parse } from "node:path"
 
 import {
   type ChatInputCommandInteraction,
-  type InteractionResponse,
+  InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder
 } from "discord.js"
 
-import { newWord, RUNNING, WORD } from "../../utils/loadWord.ts"
+import { WordJumble } from "../../utils/wordJumble.ts"
 
-const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody => {
-  return new SlashCommandBuilder()
+const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody =>
+  new SlashCommandBuilder()
     .setName(parse(import.meta.file).name)
     .setDescription("Generate new word")
+    .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .toJSON()
-}
 
 const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> => {
-  if (!RUNNING) {
-    await interaction.reply({
-      content: `-# > ❌ ${Bun.env.NAME} is not started`,
-      flags: MessageFlags.Ephemeral
-    })
-    return
-  }
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-  await newWord().then(
-    async (): Promise<InteractionResponse> =>
-      await interaction.reply({
-        content: `-# > 💬 New word: \`${WORD}\``,
-        flags: MessageFlags.Ephemeral
-      })
-  )
+  WordJumble.getNewWord()
+
+  await interaction.editReply({ content: `-# > 💬 New word: \`${WordJumble.WORD}\` as \`${WordJumble.JUMBLED_WORD}\`` })
 }
 
 export { create, invoke }

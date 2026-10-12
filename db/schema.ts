@@ -1,25 +1,12 @@
-import { type InferSelectModel } from "drizzle-orm"
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
-const users = sqliteTable("users", {
+const points = sqliteTable("points", {
   id: integer().primaryKey(),
   name: text().notNull().unique(),
-  points: integer().notNull()
-})
-
-type IUser = InferSelectModel<typeof users>
-
-const quests = sqliteTable("quests", {
-  id: integer().primaryKey(),
   points: integer().notNull(),
-  userId: integer()
-    .notNull()
-    .unique()
-    .references(() => users.id, {
-      onDelete: "cascade"
-    })
+  words: integer().notNull()
 })
 
-type IQuest = InferSelectModel<typeof quests>
+type IPoints = Omit<typeof points.$inferInsert, "id">
 
-export { type IQuest, type IUser, quests, users }
+export { type IPoints, points }
