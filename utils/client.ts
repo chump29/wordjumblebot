@@ -65,12 +65,7 @@ class WordJumbleClient implements IWordJumbleClient {
     this.CLIENT =
       testClient ??
       new DiscordClient({
-        intents: [
-          GatewayIntentBits.Guilds,
-          GatewayIntentBits.GuildMembers,
-          GatewayIntentBits.GuildMessages,
-          GatewayIntentBits.MessageContent
-        ],
+        intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
         presence: {
           activities: [
             {

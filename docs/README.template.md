@@ -26,7 +26,7 @@
 
 ### 🔗 Invite Link <!-- markdownlint-disable-line MD001 -->
 
-[Add WordJumbleBot](https://discord.com/oauth2/authorize?client_id=1496825383348211783&permissions=93184&integration_type=0&scope=bot)
+[Add WordJumbleBot](https://discord.com/oauth2/authorize?client_id=1496825383348211783&permissions=84992&integration_type=0&scope=bot)
 
 ---
 
@@ -39,7 +39,6 @@
 |    ViewChannel     |
 |    SendMessages    |
 |     EmbedLinks     |
-|   ManageMessages   |
 | ReadMessageHistory |
 
 #### Commands:

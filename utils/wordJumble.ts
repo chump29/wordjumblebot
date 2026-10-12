@@ -156,7 +156,7 @@ class WordJumbleBot implements IWordJumbleBot {
       const name: string = message.member.user.displayName
 
       await this.CHANNEL.send({
-        content: `-# > \`${name}\` said \`${this.WORD}\`\n-# > Awarding \`${points}\``,
+        content: `-# > \`${name}\` got \`${this.WORD}\`\n-# > Awarding \`${points}\``,
         flags: MessageFlags.SuppressNotifications
       })
 

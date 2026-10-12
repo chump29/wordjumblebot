@@ -10,7 +10,7 @@
 ![SQLite](https://img.shields.io/badge/SQLite-3.49.2-informational?style=plastic&logo=sqlite)
 
 ![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg) &nbsp;
-![Coverage](https://img.shields.io/badge/Coverage-78.82%25-success?style=plastic&logo=jest)
+![Coverage](https://img.shields.io/badge/Coverage-78.65%25-success?style=plastic&logo=jest)
 
 ![NO AI](https://img.shields.io/badge/NO-AI-orange?style=plastic "NO AI") &nbsp;
 ![License](https://img.shields.io/github/license/chump29/wordjumblebot?style=plastic&color=blueviolet&label=License&logo=gplv3 "GPLv3") &nbsp; <!-- markdownlint-disable MD013 -->
@@ -26,7 +26,7 @@
 
 ### 🔗 Invite Link <!-- markdownlint-disable-line MD001 -->
 
-[Add WordJumbleBot](https://discord.com/oauth2/authorize?client_id=1496825383348211783&permissions=93184&integration_type=0&scope=bot)
+[Add WordJumbleBot](https://discord.com/oauth2/authorize?client_id=1496825383348211783&permissions=84992&integration_type=0&scope=bot)
 
 ---
 
@@ -39,7 +39,6 @@
 |    ViewChannel     |
 |    SendMessages    |
 |     EmbedLinks     |
-|   ManageMessages   |
 | ReadMessageHistory |
 
 #### Commands:
