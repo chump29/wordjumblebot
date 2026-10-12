@@ -48,7 +48,7 @@
 |       Info        |        `/info`        |     None      |
 | Show Leaderboard  |    `/leaderboard`     |     None      |
 |       Ping        |        `/ping`        |     None      |
-| Reset User Score  | `/reset <@user\|all>` | Administrator |
+|    Reset Score    | `/reset <@user\|all>` | Administrator |
 |    Word Status    |       `/status`       | Administrator |
 | Generate New Word |        `/word`        | Administrator |
 
