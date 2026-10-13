@@ -105,7 +105,7 @@ class WordJumbleBot implements IWordJumbleBot {
       throw new Error("Could not get word")
     }
 
-    this.WORD = word
+    this.WORD = word.toLowerCase()
 
     this.JUMBLED_WORD = this.jumbleWord()
 
@@ -146,11 +146,11 @@ class WordJumbleBot implements IWordJumbleBot {
   }
 
   async checkForWord(message: Message): Promise<void> {
-    if (createRegExp(exactly(this.WORD), [caseInsensitive]).test(message.content)) {
-      if (!message.member || message.member.user.bot) {
-        return
-      }
+    if (!message.member || message.member.user.bot) {
+      return
+    }
 
+    if (createRegExp(exactly(this.WORD), [caseInsensitive]).test(message.content)) {
       const points: string = pluralize("point", DB.getWordPoints(this.WORD), true)
 
       const name: string = message.member.user.displayName

@@ -20,7 +20,7 @@
       },
       "devDependencies": {
         "@faker-js/faker": "^10.6.0",
-        "@postfmly/config": "^1.6.4",
+        "@postfmly/config": "^1.6.5",
         "drizzle-kit": "1.0.0-rc.4",
         "expect-type": "^1.4.0",
         "husky": "^9.1.7",
@@ -41,6 +41,7 @@
     "cspell": "10.3.6",
     "globals": "17.13.0",
     "ini": "7.0.0",
+    "undici-types": "8.11.2",
   },
   "packages": {
     "@biomejs/biome": ["@biomejs/biome@2.5.15", "https://npm.postfmly.com/@biomejs/biome/-/biome-2.5.15.tgz", { "optionalDependencies": { "@biomejs/cli-darwin-arm64": "2.5.15", "@biomejs/cli-darwin-x64": "2.5.15", "@biomejs/cli-linux-arm64": "2.5.15", "@biomejs/cli-linux-arm64-musl": "2.5.15", "@biomejs/cli-linux-x64": "2.5.15", "@biomejs/cli-linux-x64-musl": "2.5.15", "@biomejs/cli-win32-arm64": "2.5.15", "@biomejs/cli-win32-x64": "2.5.15" }, "bin": { "biome": "bin/biome" } }, "sha512-WZTW4slm/pdkh92K6t/3aEN++44JD1PQ7squ7RCMLI1flHGl43DVOIGXvCjHiZgBMO1V4uYxoFNtqrIA4qGuIQ=="],
@@ -293,7 +294,7 @@
 
     "@postfmly/checkrate": ["@postfmly/checkrate@2.0.4", "https://npm.postfmly.com/@postfmly/checkrate/-/checkrate-2.0.4.tgz", { "dependencies": { "@jarrodek/pluralize": "^1.0.2", "@lukeed/ms": "^2.0.2", "@postfmly/logger": "^1.1.9", "@postfmly/types": "^1.0.7", "dayjs": "^1.11.23", "valibot": "^1.5.0" } }, "sha512-hznewsArXvxnGpO8pc1uXhdhpgwOxGvM7sh/UwTjUh7lpd2TcFTo/R35Dm0JSQWjdEtCB0OZ4nj6RlHWFGPGLA=="],
 
-    "@postfmly/config": ["@postfmly/config@1.6.4", "https://npm.postfmly.com/@postfmly/config/-/config-1.6.4.tgz", { "dependencies": { "@biomejs/biome": "^2.5.15", "@types/bun": "^1.4.3", "@types/node": "^26.6.5", "cspell": "^10.3.6", "globals": "^17.13.0" }, "bin": { "link-configs": "bin/link-configs" } }, "sha512-t81K1Qff1ysCcTOx+42l11/bl5vfOlZDmTSgoOVHMjVfdW0+EH50ScktorOFtXPHp69NTTYbXWt/Q2CayNNQUA=="],
+    "@postfmly/config": ["@postfmly/config@1.6.5", "https://npm.postfmly.com/@postfmly/config/-/config-1.6.5.tgz", { "dependencies": { "@biomejs/biome": "^2.5.15", "@types/bun": "^1.4.3", "@types/node": "^26.6.5", "cspell": "^10.3.6", "globals": "^17.13.0" }, "bin": { "link-configs": "bin/link-configs" } }, "sha512-EJ69rDbUA82t0i+lD+nC/w31Jt2kZ/Xnnpn43EJ5UqsyYPDlM0OGrnWPoG9RDUG6Q5OD3YhEWjYtXA8EAOwkDQ=="],
 
     "@postfmly/logger": ["@postfmly/logger@1.1.9", "https://npm.postfmly.com/@postfmly/logger/-/logger-1.1.9.tgz", { "dependencies": { "ansis": "^4.4.0", "browser-or-node": "^3.0.0", "dayjs": "^1.11.23", "hex-color-to-color-name": "^2.0.8", "ts-pattern": "^5.9.0" } }, "sha512-YdJD7Nf2egW2y3g7GM3TjvHH4zbqiUyPleHxnNqbrV4Oh82hjO96/q/yLyP2sUkEgQEkNuVelUvzamvzGaGb0A=="],
 
@@ -451,7 +452,7 @@
 
     "undici": ["undici@6.29.0", "https://npm.postfmly.com/undici/-/undici-6.29.0.tgz", {}, "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg=="],
 
-    "undici-types": ["undici-types@8.9.0", "https://npm.postfmly.com/undici-types/-/undici-types-8.9.0.tgz", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
+    "undici-types": ["undici-types@8.11.2", "https://npm.postfmly.com/undici-types/-/undici-types-8.11.2.tgz", {}, "sha512-iMVNmWZ0leK/goS6eXMizSzmm9CDWtyphwbaCms3DNLqRxDL+mMoNVcZMTyyVgXP0N+Z8neAMzDoUOUJL8veKg=="],
 
     "unique-random": ["unique-random@4.0.0", "https://npm.postfmly.com/unique-random/-/unique-random-4.0.0.tgz", {}, "sha512-lrIvMDF5M9DOCy6j1YdNkMkAZkQAd0Bk7PWazA/Kr3cy2L0NhanxdeFmBFg+tDUirNHrIcQf3K7oIeBTCXpIFQ=="],
 
@@ -470,7 +471,5 @@
     "xdg-basedir": ["xdg-basedir@5.1.0", "https://npm.postfmly.com/xdg-basedir/-/xdg-basedir-5.1.0.tgz", {}, "sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ=="],
 
     "yaml": ["yaml@2.9.1", "https://npm.postfmly.com/yaml/-/yaml-2.9.1.tgz", { "bin": { "yaml": "bin.mjs" } }, "sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw=="],
-
-    "bun-types/undici-types": ["undici-types@8.11.2", "https://npm.postfmly.com/undici-types/-/undici-types-8.11.2.tgz", {}, "sha512-iMVNmWZ0leK/goS6eXMizSzmm9CDWtyphwbaCms3DNLqRxDL+mMoNVcZMTyyVgXP0N+Z8neAMzDoUOUJL8veKg=="],
   }
 }
