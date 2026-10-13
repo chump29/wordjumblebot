@@ -18,8 +18,8 @@ beforeAll(async (): Promise<void> => {
   exitSpy = spyOn(process, "exit").mockImplementation((): never => undefined as never)
 
   await Client.init({
-    destroy: jest.fn().mockResolvedValue(undefined),
-    login: jest.fn().mockResolvedValue(undefined),
+    destroy: jest.fn(),
+    login: jest.fn(),
     on: jest.fn(),
     once: jest.fn(),
     user: {

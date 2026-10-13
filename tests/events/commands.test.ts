@@ -62,7 +62,7 @@ beforeAll(async (): Promise<void> => {
   await WordJumble.init({
     channels: {
       fetch: jest.fn().mockResolvedValue({
-        send: jest.fn().mockResolvedValue(undefined)
+        send: jest.fn()
       } as unknown as TextChannel)
     } as unknown as ChannelManager
   } as Client)
@@ -90,8 +90,8 @@ await Promise.all(
       test("invoke", async (): Promise<void> => {
         const interaction: ChatInputCommandInteraction = {
           createdTimestamp: fake.date.past().getTime(),
-          deferReply: jest.fn().mockResolvedValue(undefined),
-          editReply: jest.fn().mockResolvedValue(undefined),
+          deferReply: jest.fn(),
+          editReply: jest.fn(),
           user: {
             displayName: fake.internet.displayName(),
             username: fake.internet.username()
