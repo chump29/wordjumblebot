@@ -69,13 +69,13 @@
     "drizzle-orm": "1.0.0-rc.4",
     "envalid": "^8.2.0",
     "magic-regexp": "^0.11.2",
-    "ts-pattern": "^5.9.0",
+    "ts-pattern": "^5.9.1",
     "unique-random": "^4.0.0",
     "valibot": "^1.5.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
-    "@postfmly/config": "^1.6.3",
+    "@postfmly/config": "^1.6.4",
     "drizzle-kit": "1.0.0-rc.4",
     "expect-type": "^1.4.0",
     "husky": "^9.1.7",

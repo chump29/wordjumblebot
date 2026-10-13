@@ -23,36 +23,43 @@ const create = (): RESTPostAPIChatInputApplicationCommandsJSONBody =>
     .setContexts(InteractionContextType.Guild)
     .toJSON()
 
-const ordinal = (n: number): string => {
-  const pr: Intl.PluralRules = new Intl.PluralRules("en-US", { type: "ordinal" })
+const pr: Intl.PluralRules = new Intl.PluralRules("en-US", { type: "ordinal" })
 
-  const suffixes: Record<Intl.LDMLPluralRule, string> = {
-    few: "rd",
-    many: "th",
-    one: "st",
-    other: "th",
-    two: "nd",
-    zero: "th"
-  }
+const suffixes: Record<Intl.LDMLPluralRule, string> = {
+  few: "rd",
+  many: "th", // unused, required
+  one: "st",
+  other: "th",
+  two: "nd",
+  zero: "th" // unused, required
+} as const
 
-  return `${n}${suffixes[pr.select(n)]}`
-}
+const ordinal = (n: number): string => `${n.toLocaleString()}${suffixes[pr.select(n)]}`
 
 const getEmbed = (points: IPoints[]): APIEmbedField[] => {
-  const fields: APIEmbedField[] = [
-    {
-      name: "_ _",
-      value: ""
-    } as APIEmbedField
-  ]
+  const fields: APIEmbedField[] = []
+
   if (points.length > 0) {
-    points.forEach((p: IPoints, i: number): void => {
-      fields.push({
-        inline: true,
-        name: `${i === 0 ? "👑 " : ""}${ordinal(i + 1)}: ${p.name}`,
-        value: `-# ${p.points}`
-      } as APIEmbedField)
-    })
+    const allNames: string = points
+      .map((p: IPoints, i: number): string => `-# ${ordinal(i + 1)}: ${i === 0 ? "👑 " : ""}${p.name}`)
+      .join("\n")
+
+    const allPoints: string = points.map((p: IPoints): string => `-# ${p.points.toLocaleString()}`).join("\n")
+
+    fields.push(
+      ...([
+        {
+          inline: true,
+          name: "Name",
+          value: allNames
+        },
+        {
+          inline: true,
+          name: "Points",
+          value: allPoints
+        }
+      ] as APIEmbedField[])
+    )
   } else {
     fields.push({
       name: "🚫  Nothing to show",
