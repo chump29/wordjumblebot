@@ -130,7 +130,7 @@ await Promise.all(
             expect(decimalToHex(data.color)).toBe(env.COLOR)
             expect(data.title).not.toBeEmpty()
             expect(data.fields).not.toBeUndefined()
-            expect(data.fields?.length).toBeGreaterThan(0)
+            expect(data.fields).not.toBeEmpty()
           })
           .with("ping", (): void => expect(payload.content).toInclude("Pong"))
           .with("reset", (): void => expect(payload.content).toInclude("Reset"))
