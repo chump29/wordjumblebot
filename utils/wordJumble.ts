@@ -43,6 +43,8 @@ class WordJumbleBot implements IWordJumbleBot {
 
   JUMBLED_WORD!: string
 
+  private REGEXP!: RegExp
+
   get COUNT(): number {
     return this.WORDS.length
   }
@@ -107,6 +109,8 @@ class WordJumbleBot implements IWordJumbleBot {
 
     this.WORD = word.toLowerCase()
 
+    this.REGEXP = createRegExp(exactly(word), [caseInsensitive])
+
     this.JUMBLED_WORD = this.jumbleWord()
 
     await this.CHANNEL.send({
@@ -150,7 +154,7 @@ class WordJumbleBot implements IWordJumbleBot {
       return
     }
 
-    if (createRegExp(exactly(this.WORD), [caseInsensitive]).test(message.content)) {
+    if (this.REGEXP.test(message.content)) {
       const points: string = pluralize("point", DB.getWordPoints(this.WORD), true)
 
       const name: string = message.member.user.displayName
