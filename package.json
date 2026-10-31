@@ -30,7 +30,7 @@
     "lint:biome": "bun run --bun biome check --write --verbose --reporter=default --reporter=github --error-on-warnings",
     "lint:biome:ci": "bun run --bun biome ci --verbose --reporter=default --reporter=github --error-on-warnings",
     "lint:ci": "bun run lint:biome:ci && bun run lint:ts",
-    "lint:spell": "bun run --bun cspell --dot --verbose .",
+    "lint:spell": "bun run --bun cspell --dot .",
     "lint:ts": "bun check",
     "prepare": "bun run --bun .husky/prepare.min.mjs",
     "prod": "bun run --bun index.ts",
