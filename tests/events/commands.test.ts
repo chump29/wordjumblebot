@@ -21,15 +21,12 @@ import {
 import { match } from "ts-pattern"
 
 import { type IPoints, points } from "../../db/schema.ts"
+import { type ICreate } from "../../events/clientReady.ts"
+import { type IInvoke } from "../../events/interactionCreate.ts"
 import { author, version } from "../../package.json" with { type: "json" }
 import { DB } from "../../utils/db.ts"
 import { env } from "../../utils/env.ts"
 import { WordJumble } from "../../utils/wordJumble.ts"
-
-interface ICommandFile {
-  create: () => RESTPostAPIChatInputApplicationCommandsJSONBody
-  invoke: (interaction: ChatInputCommandInteraction) => Promise<void>
-}
 
 const HEX_BASE = 16
 const COLOR_LEN = 6
@@ -81,13 +78,13 @@ afterAll((): void => {
 
 await Promise.all(
   commands.map(async (command: string): Promise<void> => {
-    const { create, invoke } = (await import(`${path.join("../..", dir)}/${command}`)) satisfies ICommandFile
+    const file: ICreate & IInvoke = await import(`${path.join("../..", dir)}/${command}`)
 
     const name = path.basename(command, ".ts")
 
     describe(`/${name}`, (): void => {
       test("create", (): void => {
-        const c: RESTPostAPIChatInputApplicationCommandsJSONBody = create()
+        const c: RESTPostAPIChatInputApplicationCommandsJSONBody = file.create()
 
         expect(c.name).toBe(name)
         expect(c.description).not.toBeEmpty()
@@ -101,7 +98,7 @@ await Promise.all(
         ]
 
         expect(
-          await invoke(
+          await file.invoke(
             createMock<ChatInputCommandInteraction>({
               createdTimestamp: fake.date.past().getTime(),
               deferReply: mockDeferReply,
