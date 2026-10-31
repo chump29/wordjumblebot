@@ -2,7 +2,7 @@ import { printVars } from "@postfmly/logger"
 import { type Optional } from "@postfmly/types"
 
 import { type HexColorString } from "discord.js"
-import { bool, cleanEnv, type ExactValidator, makeExactValidator, str, url } from "envalid"
+import { bool, cleanEnv, makeExactValidator, str, url } from "envalid"
 import { anyOf, caseInsensitive, charIn, createRegExp, exactly, wordChar } from "magic-regexp"
 import {
   check,
@@ -83,20 +83,12 @@ const TokenSchema = pipe(
   )
 )
 
-const idValidator: ExactValidator<string> = makeExactValidator<string>((s: string): string => parse(IdSchema, s))
-const colorValidator: ExactValidator<HexColorString> = makeExactValidator<HexColorString>(
-  (s: string): HexColorString => parse(ColorSchema, s)
-)
-const portValidator: ExactValidator<"random" | number> = makeExactValidator<"random" | number>(
-  (s: string): "random" | number => parse(PortSchema, s)
-)
-const lengthValidator: ExactValidator<number> = makeExactValidator<number>((s: string): number =>
-  parse(LengthSchema, s)
-)
-const pointsValidator: ExactValidator<number> = makeExactValidator<number>((s: string): number =>
-  parse(PointsSchema, s)
-)
-const tokenValidator: ExactValidator<string> = makeExactValidator<string>((s: string): string => parse(TokenSchema, s))
+const idValidator = makeExactValidator<string>((s: string): string => parse(IdSchema, s))
+const colorValidator = makeExactValidator<HexColorString>((s: string): HexColorString => parse(ColorSchema, s))
+const portValidator = makeExactValidator<"random" | number>((s: string): "random" | number => parse(PortSchema, s))
+const lengthValidator = makeExactValidator<number>((s: string): number => parse(LengthSchema, s))
+const pointsValidator = makeExactValidator<number>((s: string): number => parse(PointsSchema, s))
+const tokenValidator = makeExactValidator<string>((s: string): string => parse(TokenSchema, s))
 
 let fakeId: Optional<string>
 let fakeURL: Optional<string>
