@@ -14,7 +14,6 @@ import {
   type ChatInputCommandInteraction,
   type Client,
   EmbedBuilder,
-  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   type TextChannel,
   type User
 } from "discord.js"
@@ -84,7 +83,7 @@ await Promise.all(
 
     describe(`/${name}`, (): void => {
       test("create", (): void => {
-        const c: RESTPostAPIChatInputApplicationCommandsJSONBody = file.create()
+        const c = file.create()
 
         expect(c.name).toBe(name)
         expect(c.description).not.toBeEmpty()
