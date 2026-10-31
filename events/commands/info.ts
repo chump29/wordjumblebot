@@ -4,7 +4,6 @@ import {
   type APIEmbedField,
   type ChatInputCommandInteraction,
   EmbedBuilder,
-  type HexColorString,
   InteractionContextType,
   MessageFlags,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
@@ -35,7 +34,7 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
   await interaction.editReply({
     embeds: [
       new EmbedBuilder()
-        .setColor(env.COLOR as HexColorString)
+        .setColor(env.COLOR)
         .setAuthor({ iconURL: env.LOGO_URL, name: `${env.NAME} v${version}` })
         .setThumbnail(env.LOGO_URL)
         .setDescription("- Jumbles words")
@@ -43,7 +42,7 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
           inline: true,
           name: "Total Words",
           value: WordJumble.COUNT.toLocaleString()
-        } as APIEmbedField)
+        } satisfies APIEmbedField)
         .setFooter({ text: `By ${author.name}` })
     ]
   })

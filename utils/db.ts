@@ -15,10 +15,11 @@ import { env } from "./env.ts"
 type DBType = ReturnType<typeof drizzle>
 
 interface IWordJumbleBotDatabase {
-  readonly _db: Nullable<DBType>
   close: () => void
   getLeaderboard: () => Promise<IPoints[]>
   getWordPoints: (word: string) => number
+  /** For direct DB operations */
+  readonly instance: Nullable<DBType>
   open: () => void
   resetPoints: (name?: string) => Promise<void>
   updatePoints: (name: string, word: string) => Promise<void>
@@ -26,10 +27,10 @@ interface IWordJumbleBotDatabase {
 
 class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
   private client: Nullable<Database> = null
-  _db: Nullable<DBType> = null
+  instance: Nullable<DBType> = null
 
   open(): void {
-    if (this._db) {
+    if (this.instance) {
       if (env.DEBUG) {
         info("⚠️  Database already open")
       }
@@ -37,7 +38,7 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
       return
     }
 
-    const dbPathName: string = join(env.DB_PATH, env.DB_NAME)
+    const dbPathName = join(env.DB_PATH, env.DB_NAME)
 
     this.client = new Database(dbPathName, {
       create: true,
@@ -52,12 +53,12 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
       PRAGMA wal_checkpoint(TRUNCATE);
     `)
 
-    this._db = drizzle({
+    this.instance = drizzle({
       client: this.client,
       jit: true
     })
 
-    migrate(this._db, {
+    migrate(this.instance, {
       migrationsFolder: env.DB_PATH
     })
 
@@ -67,7 +68,7 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
   }
 
   close(): void {
-    if (!this._db) {
+    if (!this.instance) {
       if (env.DEBUG) {
         info("⚠️  Database already closed")
       }
@@ -78,7 +79,7 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
     this.client?.close()
     this.client = null
 
-    this._db = null
+    this.instance = null
 
     if (env.DEBUG) {
       info("⏹️  Database closed")
@@ -86,14 +87,14 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
   }
 
   private dbCheck(): DBType {
-    if (!this._db) {
+    if (!this.instance) {
       throw new Error("Database not open")
     }
 
-    return this._db
+    return this.instance
   }
 
-  // biome-ignore lint/nursery/useThisInClassMethods: Prefer to call it via DB.getWordPoints()
+  // biome-ignore lint/style/useThisInClassMethods: not making static
   getWordPoints(word: string): number {
     return Math.floor(
       word
@@ -105,7 +106,7 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
   }
 
   async updatePoints(name: string, word: string): Promise<void> {
-    const pts: number = this.getWordPoints(word)
+    const pts = this.getWordPoints(word)
 
     await this.dbCheck()
       .insert(points)
@@ -142,6 +143,4 @@ class WordJumbleBotDatabase implements IWordJumbleBotDatabase {
   }
 }
 
-const DB: IWordJumbleBotDatabase = new WordJumbleBotDatabase()
-
-export { DB }
+export const DB = new WordJumbleBotDatabase()

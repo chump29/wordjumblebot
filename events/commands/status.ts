@@ -25,7 +25,7 @@ const invoke = async (interaction: ChatInputCommandInteraction): Promise<void> =
   await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
   await interaction.editReply({
-    content: `-# > 💬 Listening for \`${WordJumble.WORD}\` as \`${WordJumble.JUMBLED_WORD}\` worth \`${pluralize("point", DB.getWordPoints(WordJumble.WORD as string), true)}\``
+    content: `-# > 💬 Listening for \`${WordJumble.WORD}\` as \`${WordJumble.JUMBLED_WORD}\` worth \`${pluralize("point", DB.getWordPoints(WordJumble.WORD), true)}\``
   })
 }
 

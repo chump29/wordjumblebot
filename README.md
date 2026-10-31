@@ -1,16 +1,16 @@
-# ![WordJumbleBot](./utils/images/wordjumblebot.webp) WordJumbleBot
+# ![WordJumbleBot](./utils/images/wordjumblebot.webp "WordJumbleBot") WordJumbleBot
 
 > - WordJumbleBot for Discord
 
 ---
 
-![Bun](https://img.shields.io/badge/Bun-1.4.3-informational?style=plastic&logo=bun) &nbsp;
-![discord.js](https://img.shields.io/badge/discord.js-^14.27.0-informational?style=plastic&logo=discord.js) &nbsp;
-![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.4-informational?style=plastic&logo=drizzle)
+![Bun](https://img.shields.io/badge/Bun-1.4.4-informational?style=plastic&logo=bun) &nbsp;
+![discord.js](https://img.shields.io/badge/discord.js-14.28.0-informational?style=plastic&logo=discord.js) &nbsp;
+![Drizzle](https://img.shields.io/badge/Drizzle-1.0.0--rc.5-informational?style=plastic&logo=drizzle)
 ![SQLite](https://img.shields.io/badge/SQLite-3.53.4-informational?style=plastic&logo=sqlite)
 
 ![CodeQL](https://github.com/chump29/wordjumblebot/workflows/CodeQL/badge.svg) &nbsp;
-![Coverage](https://img.shields.io/badge/Coverage-78.86%25-success?style=plastic&logo=jest)
+![Coverage](https://img.shields.io/badge/Coverage-77.04%25-success?style=plastic&logo=jest)
 
 ![NO AI](https://img.shields.io/badge/NO-AI-orange?style=plastic "NO AI") &nbsp;
 ![License](https://img.shields.io/github/license/chump29/wordjumblebot?style=plastic&color=blueviolet&label=License&logo=gplv3 "GPLv3") &nbsp; <!-- markdownlint-disable MD013 -->
@@ -35,7 +35,7 @@
 #### Role Permissions:
 
 |   ⚙️ Permission    |
-|:------------------:|
+| :----------------: |
 |    ViewChannel     |
 |    SendMessages    |
 |     EmbedLinks     |
@@ -44,7 +44,7 @@
 #### Commands:
 
 |      📋 Task      |      🔧 Command       | ⚙️ Permission |
-|:-----------------:|:---------------------:|:-------------:|
+| :---------------: | :-------------------: | :-----------: |
 |       Info        |        `/info`        |     None      |
 | Show Leaderboard  |    `/leaderboard`     |     None      |
 |       Ping        |        `/ping`        |     None      |
@@ -59,7 +59,7 @@
 #### Environment Variables:
 
 |     📝 Description      |   📌 Variable   |   {...} Value    |
-|:-----------------------:|:---------------:|:----------------:|
+| :---------------------: | :-------------: | :--------------: |
 |        Activity         |    ACTIVITY     |     Jumbling     |
 |       Channel ID        |   CHANNEL_ID    |      \<id>       |
 | Embed Color<sup>1</sup> |      COLOR      |     #78866b      |
@@ -76,16 +76,16 @@
 
 ###### <sup>1</sup> #RRGGBB format <!-- markdownlint-disable-line MD001 -->
 
-###### <sup>2</sup> 0=disable (will default to *maximum* word length = 10), or >= 3 *(must be >= `MIN_LENGTH`)*
+###### <sup>2</sup> 0=disable (will default to _maximum_ word length = 10), or >= 3 _(must be >= `MIN_LENGTH`)_
 
-###### <sup>3</sup> 0=disable (will default to *minimum* word length = 3), or >= 3
+###### <sup>3</sup> 0=disable (will default to _minimum_ word length = 3), or >= 3
 
 ###### <sup>4</sup> Must be > 0
 
 ##### From `@postfmly/logoserver`:
 
 | 📝 Description | 📌 Variable |    {...} Value     |
-|:--------------:|:-----------:|:------------------:|
+| :------------: | :---------: | :----------------: |
 |   Logo Name    |  LOGO_NAME  | wordjumblebot.webp |
 |   Local Path   |  LOGO_PATH  |   ./utils/images   |
 |      Port      |  LOGO_PORT  | **Random**/[port]  |
@@ -93,7 +93,7 @@
 
 ##### From `@postfmly/checkrate`:
 
-###### *NOTE: Rate limited to 1 request per 1 second*
+###### _NOTE: Rate limited to 1 request per 1 second_
 
 #### Points Calculation:
 
@@ -113,13 +113,12 @@ const points: number = getWordPoints(word)
 // T=84, E=69, S=83, T=84
 // 84 + 69 + 83 + 84 = 320
 // 320 / 3 = 106.6666666666667 ≈ 106
-
 ```
 
 #### Deployment:
 
 |  📜 Script  |  🔧 Command   |
-|:-----------:|:-------------:|
+| :---------: | :-----------: |
 |    Full     | `./build.sh`  |
 | Docker Only | `./docker.sh` |
 

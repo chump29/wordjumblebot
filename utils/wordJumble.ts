@@ -1,9 +1,8 @@
 import { info } from "@postfmly/logger"
-import { type Nullable, type Optional } from "@postfmly/types"
 
 import { default as pluralize } from "@jarrodek/pluralize"
 import { all as wordList } from "@wordlist/english-eff/all"
-import { type Channel, type Client, type Message, MessageFlags, type TextChannel } from "discord.js"
+import { ChannelType, type Client, type Message, MessageFlags, type TextChannel } from "discord.js"
 import { caseInsensitive, createRegExp, exactly } from "magic-regexp"
 import { match, P } from "ts-pattern"
 import { exhaustiveUniqueRandom } from "unique-random"
@@ -88,21 +87,37 @@ class WordJumbleBot implements IWordJumbleBot {
   }
 
   private jumbleWord(): string {
-    let newWord: string = ""
+    if (new Set(this.WORD.slice(1)).size === 1) {
+      return this.WORD // * NOTE: cannot scramble same letters
+    }
+
+    const parts: [string, string[]] = [this.WORD.slice(0, 1), this.WORD.slice(1).split("")]
+
+    let newWord: string
+
     do {
-      const arr: string[] = this.WORD.split("").splice(1)
-      for (let i: number = arr.length - 1; i > 0; i--) {
-        const j: number = Math.floor(Math.random() * (i + 1))
-        // @ts-expect-error: simplified Fisher-Yates algorithm
-        ;[arr[i], arr[j]] = [arr[j], arr[i]]
+      const [, letters] = parts
+
+      for (let i = letters.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+
+        // * NOTE: using Fisher-Yates algorithm
+        const first = letters[i]
+        const second = letters[j]
+        if (typeof first === "string" && typeof second === "string") {
+          letters[i] = second
+          letters[j] = first
+        }
       }
-      newWord = `${this.WORD[0]}${arr.join("")}`
+
+      newWord = `${parts[0]}${letters.join("")}`
     } while (newWord === this.WORD)
+
     return newWord
   }
 
   async getNewWord(): Promise<void> {
-    const word: Optional<string> = this.WORDS[this.random()]
+    const word = this.WORDS[this.random()]
     if (!word) {
       throw new Error("Could not get word")
     }
@@ -124,12 +139,12 @@ class WordJumbleBot implements IWordJumbleBot {
   }
 
   async init(client: Client): Promise<void> {
-    const channel: Nullable<Channel> = await client.channels.fetch(env.CHANNEL_ID)
-    if (!channel) {
+    const channel = await client.channels.fetch(env.CHANNEL_ID)
+    if (channel?.type !== ChannelType.GuildText) {
       throw new Error("Could not get channel")
     }
 
-    this.CHANNEL = channel as TextChannel
+    this.CHANNEL = channel
 
     this.OPTIONS = WordJumbleBot.getOptions()
 
@@ -155,9 +170,9 @@ class WordJumbleBot implements IWordJumbleBot {
     }
 
     if (this.REGEXP.test(message.content)) {
-      const points: string = pluralize("point", DB.getWordPoints(this.WORD), true)
+      const points = pluralize("point", DB.getWordPoints(this.WORD), true)
 
-      const name: string = message.member.user.displayName
+      const name = message.member.user.displayName
 
       await this.CHANNEL.send({
         content: `-# > \`${name}\` got \`${this.WORD}\`\n-# > Awarding \`${points}\``,
@@ -175,6 +190,4 @@ class WordJumbleBot implements IWordJumbleBot {
   }
 }
 
-const WordJumble: IWordJumbleBot = new WordJumbleBot()
-
-export { WordJumble }
+export const WordJumble = new WordJumbleBot()

@@ -1,11 +1,13 @@
 import { printVars } from "@postfmly/logger"
 import { type Optional } from "@postfmly/types"
 
+import { type HexColorString } from "discord.js"
 import { bool, cleanEnv, type ExactValidator, makeExactValidator, str, url } from "envalid"
 import { anyOf, caseInsensitive, charIn, createRegExp, exactly, wordChar } from "magic-regexp"
 import {
   check,
   digits,
+  guard,
   integer,
   literal,
   maxLength,
@@ -22,35 +24,37 @@ import {
   union
 } from "valibot"
 
-const MIN_ID_LEN: number = 17
-const MAX_ID_LEN: number = 19
+const MIN_ID_LEN = 17
+const MAX_ID_LEN = 19
 
-const COLOR_LEN: number = 6
+const COLOR_LEN = 6
 
-// * NOTE: Comes from min/max word length in @wordlist/english-eff/all
-const MIN_WORD_LEN: number = 3
-const MAX_WORD_LEN: number = 10
+// * NOTE: comes from https://github.com/xyfir/wordlist/blob/main/packages/english-eff/src/all.ts
+const MIN_WORD_LEN = 3
+const MAX_WORD_LEN = 10
 
-const MIN_PORT: number = 1024
-const MAX_PORT: number = 65_535
+const MIN_PORT = 1024
+const MAX_PORT = 65_535
 
-const UID_MIN_LEN: number = 23
-const UID_MAX_LEN: number = 28
-const TS_MIN_LEN: number = 6
-const TS_MAX_LEN: number = 7
-const HMAC_MIN_LEN: number = 27
-const HMAC_MAX_LEN: number = 38
+const UID_MIN_LEN = 23
+const UID_MAX_LEN = 28
+const TS_MIN_LEN = 6
+const TS_MAX_LEN = 7
+const HMAC_MIN_LEN = 27
+const HMAC_MAX_LEN = 38
 
 const StringSchema = pipe(string(), trim(), nonEmpty())
 const IdSchema = pipe(StringSchema, digits(), minLength(MIN_ID_LEN), maxLength(MAX_ID_LEN))
 const ColorSchema = pipe(
   StringSchema,
   regex(
-    // ! Desired: /^(?:#[\da-f]{6})$/i
-    createRegExp(exactly("#").at.lineStart(), charIn("0123456789abcdef").times(COLOR_LEN).at.lineEnd(), [
-      caseInsensitive
-    ])
-  )
+    createRegExp(
+      exactly("#").at.lineStart(),
+      charIn.from("0", "9").orChar.from("a", "f").times(COLOR_LEN).at.lineEnd(),
+      [caseInsensitive]
+    )
+  ),
+  guard((_: string): _ is HexColorString => true)
 )
 const LengthSchema = pipe(
   StringSchema,
@@ -80,11 +84,13 @@ const TokenSchema = pipe(
 )
 
 const idValidator: ExactValidator<string> = makeExactValidator<string>((s: string): string => parse(IdSchema, s))
-const colorValidator: ExactValidator<string> = makeExactValidator<string>((s: string): string => parse(ColorSchema, s))
+const colorValidator: ExactValidator<HexColorString> = makeExactValidator<HexColorString>(
+  (s: string): HexColorString => parse(ColorSchema, s)
+)
 const portValidator: ExactValidator<"random" | number> = makeExactValidator<"random" | number>(
   (s: string): "random" | number => parse(PortSchema, s)
 )
-const LengthValidator: ExactValidator<number> = makeExactValidator<number>((s: string): number =>
+const lengthValidator: ExactValidator<number> = makeExactValidator<number>((s: string): number =>
   parse(LengthSchema, s)
 )
 const pointsValidator: ExactValidator<number> = makeExactValidator<number>((s: string): number =>
@@ -99,7 +105,7 @@ let fakeToken: Optional<string>
 if (Bun.env.NODE_ENV === "test") {
   const { fakerEN_US: fake } = await import("@faker-js/faker")
 
-  let chars: string = "[0-9]"
+  let chars = "[0-9]"
   fakeId = fake.helpers.fromRegExp(`${chars}{${MIN_ID_LEN},${MAX_ID_LEN}}`)
 
   fakeURL = fake.image.url({ height: 64, width: 64 })
@@ -121,8 +127,8 @@ const env = cleanEnv(Bun.env, {
   LOGO_PATH: str({ default: "./utils/images" }),
   LOGO_PORT: portValidator({ default: "random" }),
   LOGO_URL: url({ testDefault: fakeURL }),
-  MAX_LENGTH: LengthValidator({ default: 0 }),
-  MIN_LENGTH: LengthValidator({ default: 5 }),
+  MAX_LENGTH: lengthValidator({ default: 0 }),
+  MIN_LENGTH: lengthValidator({ default: 5 }),
   NAME: str({ default: "WordJumbleBot" }),
   POINTS_MODIFIER: pointsValidator({ default: 3 }),
   QUEST_POINTS: pointsValidator({ default: 100 }),
