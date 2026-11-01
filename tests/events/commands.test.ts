@@ -14,8 +14,7 @@ import {
   type ChatInputCommandInteraction,
   type Client,
   EmbedBuilder,
-  type TextChannel,
-  type User
+  type TextChannel
 } from "discord.js"
 import { match } from "ts-pattern"
 
@@ -102,12 +101,12 @@ await Promise.all(
               createdTimestamp: fake.date.past().getTime(),
               deferReply: mockDeferReply,
               editReply: mockEditReply,
-              user: createMock<User>({
-                displayName: fake.internet.displayName(),
-                username: fake.internet.username()
-              }),
               options: {
                 getString: mock<() => string>().mockReturnValue("all")
+              },
+              user: {
+                displayName: fake.internet.displayName(),
+                username: fake.internet.username()
               }
             })
           )
