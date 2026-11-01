@@ -24,7 +24,7 @@
     "deps": "bunx --bun depcheck --ignores=\"@postfmly/config,@types/*,bun:*,lcov-total\"",
     "dev": "bun run --bun --watch index.ts",
     "env": "bun run --bun utils/env.ts",
-    "env:test": "NODE_ENV=test bun run --bun utils/env.ts",
+    "env:test": "NODE_ENV=test bun run env",
     "preinstall": "bunx --bun only-allow bun",
     "lint": "bun run lint:spell && bun run lint:biome && bun run lint:ts",
     "lint:biome": "bun run --bun biome check --write --verbose --reporter=default --reporter=github --error-on-warnings",
@@ -41,8 +41,8 @@
     "sql": "drizzle-kit generate",
     "test": "bun test --isolate --dots --preload ./tests/setup.ts --bail --check",
     "test:coverage": "bun test --isolate --dots --coverage-dir ./tests/coverage --coverage-reporter=text --coverage-reporter=lcov --preload ./tests/setup.ts --bail --check",
-    "test:coverage:full": "bun test --isolate --coverage-dir ./tests/coverage --coverage-reporter=text --coverage-reporter=lcov --preload ./tests/setup.ts --bail --check",
-    "test:full": "bun test --isolate --preload ./tests/setup.ts --bail --check",
+    "test:coverage:full": "TEST_FULL=true bun test --isolate --coverage-dir ./tests/coverage --coverage-reporter=text --coverage-reporter=lcov --preload ./tests/setup.ts --bail --check",
+    "test:full": "TEST_FULL=true bun test --isolate --preload ./tests/setup.ts --bail --check",
     "updates": "bunx --bun npm-check-updates --dep overrides,prod,dev --cooldown 0 --install never --packageManager bun --peer"
   },
   "lint-staged": {

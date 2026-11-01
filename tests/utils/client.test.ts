@@ -8,8 +8,10 @@ import { type ClientUser, type Client as DiscordClient } from "discord.js"
 import { Client } from "../../utils/client.ts"
 import { env } from "../../utils/env.ts"
 
-// * NOTE: suppress console output
-const infoSpy = spyOn(console, "info").mockImplementation((): void => undefined)
+const infoSpy = spyOn(console, "info")
+if (!env.TEST_FULL) {
+  infoSpy.mockImplementation((): void => undefined)
+}
 
 // biome-ignore lint/nursery/noUnsafeTypeAssertion: suppress output
 const exitSpy = spyOn(process, "exit").mockImplementation((): never => undefined as never)

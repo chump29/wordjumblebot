@@ -125,6 +125,7 @@ const env = cleanEnv(Bun.env, {
   POINTS_MODIFIER: pointsValidator({ default: 3 }),
   QUEST_POINTS: pointsValidator({ default: 100 }),
   QUEST_WORDS: pointsValidator({ default: 10 }),
+  TEST_FULL: bool({ default: false }),
   TOKEN: tokenValidator({ testDefault: fakeToken })
 })
 
