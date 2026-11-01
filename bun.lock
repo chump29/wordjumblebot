@@ -366,7 +366,7 @@
 
     "global-directory": ["global-directory@5.0.0", "https://npm.postfmly.com/global-directory/-/global-directory-5.0.0.tgz", { "dependencies": { "ini": "6.0.0" } }, "sha512-1pgFdhK3J2LeM+dVf2Pd424yHx2ou338lC0ErNP2hPx4j8eW1Sp0XqSjNxtk6Tc4Kr5wlWtSvz8cn2yb7/SG/w=="],
 
-    "globals": ["globals@17.13.0", "https://npm.postfmly.com/globals/-/globals-17.13.0.tgz", {}, "sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg=="],
+    "globals": ["globals@17.14.0", "https://npm.postfmly.com/globals/-/globals-17.14.0.tgz", {}, "sha512-UtdkTVyAJePQv0J2M9Xe4L0ruNSDV314XiIJsADI2Zf40bcdAonE/D/OhAU8AT99oij9mhLByb+NvA3QWZYgCg=="],
 
     "hex-color-to-color-name": ["hex-color-to-color-name@2.0.8", "https://npm.postfmly.com/hex-color-to-color-name/-/hex-color-to-color-name-2.0.8.tgz", {}, "sha512-s69Eu+30Z1oC/GMwEeqbThT0m3G7AzFlNlpSInzwEKwpO4gPXYInlA/wYWLDXpscJ/VWazdbgnWTpT3rpFn+vQ=="],
 

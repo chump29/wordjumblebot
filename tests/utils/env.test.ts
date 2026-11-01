@@ -23,7 +23,7 @@ describe("env", (): void => {
   test("COLOR", (): void => {
     expectTypeOf(env.COLOR).toEqualTypeOf<HexColorString>()
 
-    const LEN: number = 7
+    const LEN = 7
 
     expect(env.COLOR).toHaveLength(LEN)
   })
