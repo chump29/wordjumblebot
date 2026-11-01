@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/nursery/useLowercaseTestTitle: using env names */
+// biome-ignore-all lint/nursery/useLowercaseTestTitle: using env names
 
 import { describe, expect, test } from "bun:test"
 
