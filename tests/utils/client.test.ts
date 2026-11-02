@@ -13,7 +13,7 @@ if (!env.TEST_FULL) {
   infoSpy.mockImplementation((): void => undefined)
 }
 
-// biome-ignore lint/nursery/noUnsafeTypeAssertion: suppress output
+// biome-ignore lint/nursery/noUnsafeTypeAssertion: keep from shutting down tests
 const exitSpy = spyOn(process, "exit").mockImplementation((): never => undefined as never)
 
 const tag = `${env.NAME}#${fake.string.numeric({ allowLeadingZeros: false, length: 4 })}`
