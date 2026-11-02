@@ -1,4 +1,3 @@
 {
-  "$schema": "https://biomejs.dev/schemas/latest/schema.json",
   "extends": ["@postfmly/config/biome.json"]
 }
